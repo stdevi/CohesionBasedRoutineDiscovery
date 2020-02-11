@@ -29,7 +29,7 @@ public class CSVLogParser {
     }
 
     private static Action getAction(String line) {
-        String[] p = line.split(",");
+        String[] p = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
         List<String> attributes = Arrays.stream(p).map(el -> {
             if (el == null || el.equals("")) {
                 return null;

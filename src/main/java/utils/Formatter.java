@@ -7,7 +7,7 @@ public class Formatter {
 
     public static StringBuilder formatData(StringBuilder data) {
         Map<String, String> actionCode = new HashMap<>();
-        Integer[] code = {0};
+        Integer[] code = {1};
 
         String res = Arrays.stream(data.toString().split("\n")).map(itemset -> {
             String[] split = itemset.split(" -1 ");
@@ -18,7 +18,12 @@ public class Formatter {
         }).collect(Collectors.joining(" -1 -2\n", "", " -1 -2"));
 
         StringBuilder stringBuilder = new StringBuilder(res);
-        actionCode.forEach((key, value) ->
+        Map<String, String> sorted = actionCode.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Integer::parseInt)))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        sorted.forEach((key, value) ->
                 stringBuilder.insert(0, String.format("@ITEM=%s=%s\n", value, key))
         );
         stringBuilder.insert(0, "@CONVERTED_FROM_TEXT\n");

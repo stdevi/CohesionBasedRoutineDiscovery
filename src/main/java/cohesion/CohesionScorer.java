@@ -1,22 +1,30 @@
 package cohesion;
 
+import entity.Pattern;
+
 import java.util.*;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CohesionScorer {
     private List<String> sequences;
-    private List<List<String>> itemsets;
-    private Map<List<String>, Integer> scores;
+    private List<Pattern> patterns;
+    private Map<Pattern, Integer> scores;
 
-    public CohesionScorer(List<String> sequences, List<List<String>> itemsets) {
+    public List<Pattern> findScoresForItemsets(List<String> sequences, List<Pattern> patterns) {
         this.sequences = sequences;
-        this.itemsets = itemsets;
+        this.patterns = patterns;
+
+        patterns = patterns.stream()
+                .peek(pattern -> pattern.setCohesionScore(getCohesionItemsetScore(pattern.getItems())))
+                .collect(Collectors.toList());
+
+        return patterns;
     }
 
-    public Map<List<String>, Integer> findScores() {
+    public Map<Pattern, Integer> findScores() {
         scores = new HashMap<>();
-        itemsets.forEach(itemset -> scores.put(itemset, getCohesionItemsetScore(itemset)));
+        patterns.forEach(pattern -> scores.put(pattern, getCohesionItemsetScore(pattern.getItems())));
 
         return scores;
     }
@@ -75,7 +83,7 @@ public class CohesionScorer {
         return outliers;
     }
 
-    private Pattern getPattern(List<String> itemset) {
+    private java.util.regex.Pattern getPattern(List<String> itemset) {
         StringBuilder regex = new StringBuilder();
         StringJoiner itemJoiner = new StringJoiner("|", "([", "])");
         itemset.forEach(itemJoiner::add);
@@ -100,6 +108,6 @@ public class CohesionScorer {
             }
         }
 
-        return Pattern.compile(regex.toString());
+        return java.util.regex.Pattern.compile(regex.toString());
     }
 }

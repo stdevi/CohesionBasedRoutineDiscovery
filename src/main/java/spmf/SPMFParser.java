@@ -43,8 +43,8 @@ public class SPMFParser {
         List<Action> sequence = new ArrayList<>();
         for (Action action : actions) {
             sequence.add(action);
-            if (action.getLabel() != null && (action.getLabel().equals("confirm") ||
-                    action.getType() != null && action.getType().equals("submit"))) {
+            if ((action.getLabel() != null && action.getLabel().equals("confirm")) ||
+                    (action.getType() != null && action.getType().equals("submit"))) {
                 sequences.add(new ArrayList<>(sequence));
                 sequence.clear();
             }

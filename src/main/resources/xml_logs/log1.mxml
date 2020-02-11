@@ -4,7 +4,7 @@
 <!-- OpenXES library version: 1.0RC7 -->
 <!-- OpenXES is available from http://www.xes-standard.org/ -->
 <WorkflowLog>
-	<Source program="XES MXML serialization" openxes.version="1.0RC7"/>
+	<Source program="XES MXML serialization" openxes="1.0RC7"/>
 	<Process id="C:\Users\Antonio\Desktop\TESI\CPN\SIMULATION\TEST\output\simrep-1" description="process with id C:\Users\Antonio\Desktop\TESI\CPN\SIMULATION\TEST\output\simrep-1">
 		<Data>
 			<attribute name="concept:name">C:\Users\Antonio\Desktop\TESI\CPN\SIMULATION\TEST\output\simrep-1</attribute>

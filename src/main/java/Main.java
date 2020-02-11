@@ -1,11 +1,13 @@
 import cohesion.CohesionParser;
 import cohesion.CohesionScorer;
 import entity.Action;
+import entity.Pattern;
 import spmf.SPMFAlgorithmName;
 import spmf.SPMFExecutor;
 import spmf.SPMFParser;
 import utils.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class Main {
@@ -29,17 +31,20 @@ public class Main {
         Writer.writeFile(spmfFormattedInput, PropertyValues.getProperty("spmfFormattedInputFilePath"));
 
         // Execute SPMF Algorithm
-        SPMFExecutor.runSPMFAlgorithm(SPMFAlgorithmName.BIDE, 5);
+        SPMFExecutor.runSPMFAlgorithm(SPMFAlgorithmName.BIDE, 10);
 
         // Parse sequences and itemsets
         CohesionParser cohesionParser = new CohesionParser();
-        cohesionParser.parseSequences(PropertyValues.getProperty("spmfInputFilePath"));
-        cohesionParser.parseItemsets(PropertyValues.getProperty("spmfOutputFilePath"));
+        List<String> spmfSequences = cohesionParser.parseSequences(PropertyValues.getProperty("spmfInputFilePath"));
+        List<Pattern> spmfPatterns = cohesionParser.parsePatterns(PropertyValues.getProperty("spmfOutputFilePath"));
 
         // Generate scores
-        CohesionScorer scorer = new CohesionScorer(cohesionParser.getSequences(), cohesionParser.getItemsets());
-        scorer.findScores();
-        scorer.printSortedScores();
+        CohesionScorer scorer = new CohesionScorer();
+        List<Pattern> scoredPatterns = scorer.findScoresForItemsets(spmfSequences, spmfPatterns);
+
+        // Print formatted patterns
+        scoredPatterns.sort(Comparator.comparingInt(Pattern::getCohesionScore));
+        scoredPatterns.forEach(System.out::println);
     }
 
     private static StringBuilder getSPMFInputFromCSV(String logFilePath, SPMFParser spmfParser) {
