@@ -1,6 +1,7 @@
 package cohesion;
 
 import entity.Pattern;
+import entity.Sequence;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,43 +14,43 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CohesionParser {
-    private List<String> sequences;
-    private List<Pattern> patterns;
 
-    public List<String> parseSequences(String fileName) {
-        sequences = new ArrayList<>();
+    public List<Sequence> parseFormattedSequences(String fileName) {
+        List<String> sequences = parseRowSequences(fileName);
+        sequences = removeSequencesDelimiters(sequences);
+        sequences = encodeSequences(sequences);
 
-        try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            stream.forEach(sequences::add);
-        } catch (IOException e) {
-            e.printStackTrace();
+        return formatSequences(sequences);
+    }
+
+    private List<Sequence> formatSequences(List<String> rowSequences) {
+        List<Sequence> sequences = new ArrayList<>();
+        int id = 1;
+        for (String s : rowSequences) {
+            List<String> sequence = new ArrayList<>(Arrays.asList(s.split(",")));
+            sequences.add(new Sequence(id, sequence));
+            id++;
         }
-
-        sequences = sequences.stream()
-                .map(sequence -> sequence
-                        .replace(" -1 -2", "")
-                        .replace(" -1 ", ","))
-                .collect(Collectors.toList());
 
         return sequences;
     }
 
-    public List<String> parseFormattedSequences(String fileName) {
-        sequences = new ArrayList<>();
+    private List<String> removeSequencesDelimiters(List<String> sequences) {
+        return sequences.stream()
+                .map(sequence -> sequence
+                        .replace(" -1 -2", "")
+                        .replace(" -1 ", ","))
+                .collect(Collectors.toList());
+    }
+
+    private List<String> parseRowSequences(String fileName) {
+        List<String> sequences = new ArrayList<>();
 
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             stream.forEach(sequences::add);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        sequences = sequences.stream()
-                .map(sequence -> sequence
-                        .replace(" -1 -2", "")
-                        .replace(" -1 ", ","))
-                .collect(Collectors.toList());
-
-        sequences = encodeSequences(sequences);
 
         return sequences;
     }
@@ -71,7 +72,7 @@ public class CohesionParser {
     }
 
     public List<Pattern> parsePatterns(String fileName) {
-        patterns = new ArrayList<>();
+        List<Pattern> patterns = new ArrayList<>();
 
         try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
             patterns = readItemsets(stream);
@@ -106,14 +107,6 @@ public class CohesionParser {
                 })
                 .collect(Collectors.toList());
 
-        return patterns;
-    }
-
-    public List<String> getSequences() {
-        return sequences;
-    }
-
-    public List<Pattern> getPatterns() {
         return patterns;
     }
 }

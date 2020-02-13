@@ -12,6 +12,10 @@ public class Pattern {
         items = new ArrayList<>();
     }
 
+    public Pattern(List<String> items) {
+        this.items = items;
+    }
+
     public Pattern(List<String> items, int support) {
         this.items = items;
         this.support = support;
@@ -43,6 +47,10 @@ public class Pattern {
 
     public void setCohesionScore(int cohesionScore) {
         this.cohesionScore = cohesionScore;
+    }
+
+    public int getLength() {
+        return items.size();
     }
 
     @Override
