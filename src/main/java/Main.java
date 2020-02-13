@@ -35,12 +35,12 @@ public class Main {
 
         // Parse sequences and itemsets
         CohesionParser cohesionParser = new CohesionParser();
-        List<String> spmfSequences = cohesionParser.parseSequences(PropertyValues.getProperty("spmfInputFilePath"));
+        List<String> spmfSequences = cohesionParser.parseFormattedSequences(PropertyValues.getProperty("spmfFormattedInputFilePath"));
         List<Pattern> spmfPatterns = cohesionParser.parsePatterns(PropertyValues.getProperty("spmfOutputFilePath"));
 
         // Generate scores
         CohesionScorer scorer = new CohesionScorer();
-        List<Pattern> scoredPatterns = scorer.findScoresForItemsets(spmfSequences, spmfPatterns);
+        List<Pattern> scoredPatterns = scorer.findScoresForPatterns(spmfSequences, spmfPatterns);
 
         // Print formatted patterns
         scoredPatterns.sort(Comparator.comparingInt(Pattern::getCohesionScore));

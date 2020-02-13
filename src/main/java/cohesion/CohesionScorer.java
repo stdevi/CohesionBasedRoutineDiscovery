@@ -11,12 +11,12 @@ public class CohesionScorer {
     private List<Pattern> patterns;
     private Map<Pattern, Integer> scores;
 
-    public List<Pattern> findScoresForItemsets(List<String> sequences, List<Pattern> patterns) {
+    public List<Pattern> findScoresForPatterns(List<String> sequences, List<Pattern> patterns) {
         this.sequences = sequences;
         this.patterns = patterns;
 
         patterns = patterns.stream()
-                .peek(pattern -> pattern.setCohesionScore(getCohesionItemsetScore(pattern.getItems())))
+                .peek(pattern -> pattern.setCohesionScore(getCohesionPatternScore(pattern.getItems())))
                 .collect(Collectors.toList());
 
         return patterns;
@@ -24,7 +24,7 @@ public class CohesionScorer {
 
     public Map<Pattern, Integer> findScores() {
         scores = new HashMap<>();
-        patterns.forEach(pattern -> scores.put(pattern, getCohesionItemsetScore(pattern.getItems())));
+        patterns.forEach(pattern -> scores.put(pattern, getCohesionPatternScore(pattern.getItems())));
 
         return scores;
     }
@@ -38,14 +38,14 @@ public class CohesionScorer {
     }
 
 
-    private int getCohesionItemsetScore(List<String> itemset) {
-        int medianOutlierCount = getMedianOutlierCount(itemset);
+    private int getCohesionPatternScore(List<String> pattern) {
+        int medianOutlierCount = getMedianOutlierCount(pattern);
 
-        return itemset.size() - medianOutlierCount;
+        return pattern.size() - medianOutlierCount;
     }
 
-    private int getMedianOutlierCount(List<String> itemset) {
-        List<Integer> list = getOutlierLengthList(itemset);
+    private int getMedianOutlierCount(List<String> pattern) {
+        List<Integer> list = getOutlierLengthList(pattern);
         Collections.sort(list);
 
         int median;
@@ -57,45 +57,47 @@ public class CohesionScorer {
         return median;
     }
 
-    private List<Integer> getOutlierLengthList(List<String> itemset) {
+    private List<Integer> getOutlierLengthList(List<String> pattern) {
         List<Integer> lengthsList = new ArrayList<>();
-        sequences.forEach(sequence -> lengthsList.add(getOutliers(sequence, itemset).size()));
+        sequences.forEach(sequence -> lengthsList.add(getOutliers(sequence, pattern).size()));
 
         return lengthsList;
     }
 
-    private List<String> getOutliers(String sequence, List<String> itemset) {
+    private List<String> getOutliers(String sequence, List<String> pattern) {
         List<String> outliers = new ArrayList<>();
         List<Integer> indexes = new ArrayList<>();
-        Matcher m = getPattern(itemset).matcher(sequence);
+        Matcher m = getPattern(pattern).matcher(sequence);
 
-        for (int i = 2; i < 2 * itemset.size() - 1; i += 2) {
+        for (int i = 2; i < 2 * pattern.size() - 1; i += 2) {
             indexes.add(i);
         }
 
         if (m.find()) {
-            indexes.forEach(index -> outliers.addAll(Arrays.asList(m.group(index).split(","))));
-            StringJoiner anyElement = new StringJoiner("|", "[", "]");
-            itemset.forEach(anyElement::add);
+            indexes.forEach(index -> {
+                outliers.addAll(Arrays.asList(m.group(index).split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)")));
+            });
+            StringJoiner anyElement = new StringJoiner("|", "", "");
+            pattern.forEach(anyElement::add);
             outliers.removeIf(item -> item == null || "".equals(item) || item.matches(anyElement.toString()));
         }
 
         return outliers;
     }
 
-    private java.util.regex.Pattern getPattern(List<String> itemset) {
+    private java.util.regex.Pattern getPattern(List<String> pattern) {
         StringBuilder regex = new StringBuilder();
-        StringJoiner itemJoiner = new StringJoiner("|", "([", "])");
-        itemset.forEach(itemJoiner::add);
+        StringJoiner itemJoiner = new StringJoiner("|", "(", ")");
+        pattern.forEach(itemJoiner::add);
         String item = itemJoiner.toString();
 
         List<Integer> indexes = new ArrayList<>();
-        for (int i = 1; i < 2 * itemset.size() - 1; i += 2) {
+        for (int i = 1; i < 2 * pattern.size() - 1; i += 2) {
             indexes.add(i);
         }
 
         regex.append(item);
-        for (int i = 1; i < itemset.size(); i++) {
+        for (int i = 1; i < pattern.size(); i++) {
             StringJoiner itemIndexJoiner = new StringJoiner("|", "(?!", ")");
             for (int j = 0; j < i; j++) {
                 itemIndexJoiner.add("\\" + indexes.get(j).toString());

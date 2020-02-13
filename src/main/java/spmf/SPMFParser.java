@@ -60,18 +60,18 @@ public class SPMFParser {
 
         if (columnPresented) {
             if (action.getColumn() != null) {
-                result.append("+").append(action.getColumn()).append(" -1 ");
+                result.append("_").append(action.getColumn()).append(" -1 ");
                 return;
             }
         } else {
             if (action.getRow() != null) {
-                result.append("+").append(action.getRow()).append(" -1 ");
+                result.append("_").append(action.getRow()).append(" -1 ");
                 return;
             }
         }
 
         if (action.getLabel() != null) {
-            result.append("+").append(action.getLabel().replaceAll("\\s+", "")).append(" -1 ");
+            result.append("_").append(action.getLabel().replaceAll("\\s+", "")).append(" -1 ");
             return;
         }
 

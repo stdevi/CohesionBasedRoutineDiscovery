@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,6 +30,42 @@ public class CohesionParser {
                         .replace(" -1 -2", "")
                         .replace(" -1 ", ","))
                 .collect(Collectors.toList());
+
+        return sequences;
+    }
+
+    public List<String> parseFormattedSequences(String fileName) {
+        sequences = new ArrayList<>();
+
+        try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
+            stream.forEach(sequences::add);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        sequences = sequences.stream()
+                .map(sequence -> sequence
+                        .replace(" -1 -2", "")
+                        .replace(" -1 ", ","))
+                .collect(Collectors.toList());
+
+        sequences = encodeSequences(sequences);
+
+        return sequences;
+    }
+
+    private List<String> encodeSequences(List<String> sequences) {
+        Map<String, String> aliasesMap;
+        aliasesMap = sequences.stream().filter(el -> el.startsWith("@ITEM"))
+                .collect(Collectors.toMap(
+                        alias -> alias.replaceAll("@ITEM=([0-9]*)=.*", "$1"),
+                        alias -> alias.replaceAll("@ITEM=[0-9]*=(\\w*)", "$1"))
+                );
+
+        sequences = sequences.stream().map(sequence -> Arrays.stream(sequence.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"))
+                .map(actionAlias -> aliasesMap.getOrDefault(actionAlias, actionAlias))
+                .collect(Collectors.joining(","))
+        ).filter(sequence -> !sequence.startsWith("@")).collect(Collectors.toList());
 
         return sequences;
     }
