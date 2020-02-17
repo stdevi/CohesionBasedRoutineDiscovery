@@ -1,28 +1,28 @@
 import cohesion.CohesionParser;
 import cohesion.CohesionScorer;
-import entity.Action;
 import entity.Pattern;
 import entity.Sequence;
+import entity.event.Event;
+import org.apache.commons.io.FilenameUtils;
 import spmf.SPMFAlgorithmName;
 import spmf.SPMFExecutor;
 import spmf.SPMFParser;
-import utils.*;
+import utils.Formatter;
+import utils.PropertyValues;
+import utils.Writer;
+import utils.parser.CSVLogParser;
+import utils.parser.LogParser;
+import utils.parser.XMLLogParser;
 
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        String logFormat = args[0];
-        SPMFParser spmfParser = new SPMFParser();
-        StringBuilder spmfInput;
+        String logFile = args[0];
 
-        if (logFormat.equals("-xml")) {
-            spmfInput = getSPMFInputFromXML(args[1], spmfParser);
-        } else if (logFormat.equals("-csv")) {
-            spmfInput = getSPMFInputFromCSV(args[1], spmfParser);
-        } else {
-            throw new IllegalArgumentException("Specify first argument: '-xml' or '-csv'.");
-        }
+        LogParser logParser = getLogParser(logFile);
+        List<Event> events = logParser.parseLogFile(logFile);
+        StringBuilder spmfInput = SPMFParser.transformActionsToSPMF(events);
 
         // Write formatted input with aliases
         writeInputFile(spmfInput);
@@ -41,18 +41,22 @@ public class Main {
         scoredPatterns.forEach(System.out::println);
     }
 
-    private static StringBuilder getSPMFInputFromCSV(String logFilePath, SPMFParser spmfParser) {
-        List<Action> actions = CSVLogParser.parseLogFile(logFilePath);
-        return spmfParser.transformActionsToSPMF(actions);
-    }
-
-    private static StringBuilder getSPMFInputFromXML(String logFilePath, SPMFParser spmfParser) {
-        List<List<Action>> sequences = XMLLogParser.parseLogFile(logFilePath);
-        return spmfParser.transformSequencesToSPMF(sequences);
-    }
-
     private static void writeInputFile(StringBuilder data) {
         StringBuilder spmfFormattedInput = Formatter.formatData(data);
         Writer.writeFile(spmfFormattedInput, PropertyValues.getProperty("spmfFormattedInputFilePath"));
+    }
+
+    private static LogParser getLogParser(String logFile) {
+        LogParser logParser;
+
+        if (FilenameUtils.isExtension(logFile, "mxml")) {
+            logParser = new XMLLogParser();
+        } else if (FilenameUtils.isExtension(logFile, "csv")) {
+            logParser = new CSVLogParser();
+        } else {
+            throw new IllegalArgumentException("Wrong log file extension!");
+        }
+
+        return logParser;
     }
 }

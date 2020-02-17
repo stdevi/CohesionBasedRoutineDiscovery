@@ -1,80 +1,34 @@
 package spmf;
 
-import entity.Action;
+import entity.event.Event;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SPMFParser {
-    private static List<List<Action>> sequences;
+    private static Map<String, List<Event>> sequencePerCaseId;
 
     public SPMFParser() {
-        sequences = new ArrayList<>();
+        sequencePerCaseId = new HashMap<>();
     }
 
-    public StringBuilder transformSequencesToSPMF(List<List<Action>> sequences) {
-        StringBuilder result = new StringBuilder();
+    public static StringBuilder transformActionsToSPMF(List<Event> events) {
+        sequencePerCaseId = events.stream().collect(Collectors.groupingBy(Event::getCaseID));
 
-        for (List<Action> sequence : sequences) {
-            for (Action action : sequence) {
-                assembleAction(result, action, true);
-            }
-            result.append("-2\n");
-        }
+        StringBuilder spmfSequences = new StringBuilder();
+        sequencePerCaseId.forEach((caseId, sequence) -> {
+            sequence.forEach(event -> assembleEvent(spmfSequences, event));
+            spmfSequences.append("-2\n");
+        });
 
-        return result;
+        return spmfSequences;
     }
 
-    public StringBuilder transformActionsToSPMF(List<Action> actions) {
-        createSequencesFromActions(actions);
-        StringBuilder result = new StringBuilder();
-
-        for (List<Action> sequence : sequences) {
-            for (Action action : sequence) {
-                assembleAction(result, action, true);
-            }
-            result.append("-2\n");
-        }
-
-        return result;
-    }
-
-    private void createSequencesFromActions(List<Action> actions) {
-        List<Action> sequence = new ArrayList<>();
-        for (Action action : actions) {
-            sequence.add(action);
-            if ((action.getLabel() != null && action.getLabel().equals("confirm")) ||
-                    (action.getType() != null && action.getType().equals("submit"))) {
-                sequences.add(new ArrayList<>(sequence));
-                sequence.clear();
-            }
-        }
-
-        if (sequence.size() != 0) {
-            sequences.add(new ArrayList<>(sequence));
-        }
-    }
-
-    private void assembleAction(StringBuilder result, Action action, boolean columnPresented) {
-        result.append(action.getConceptName());
-
-        if (columnPresented) {
-            if (action.getColumn() != null) {
-                result.append("+").append(action.getColumn()).append(" -1 ");
-                return;
-            }
-        } else {
-            if (action.getRow() != null) {
-                result.append("+").append(action.getRow()).append(" -1 ");
-                return;
-            }
-        }
-
-        if (action.getLabel() != null) {
-            result.append("+").append(action.getLabel().replaceAll("\\s+", "")).append(" -1 ");
-            return;
-        }
-
-        result.append(" -1 ");
+    private static void assembleEvent(StringBuilder result, Event event) {
+        result.append(event.getEventType());
+        String context = event.getContext().values().isEmpty() ? "" : String.valueOf(event.getContext().values().toArray()[0]);
+        result.append("+").append(context).append(" -1 ");
     }
 }
