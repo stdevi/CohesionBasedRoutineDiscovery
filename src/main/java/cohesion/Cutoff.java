@@ -1,6 +1,6 @@
-package utils;
+package cohesion;
 
-import entity.Pattern;
+import cohesion.entity.Pattern;
 
 import java.util.Collections;
 import java.util.Comparator;

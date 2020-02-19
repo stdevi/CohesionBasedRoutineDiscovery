@@ -1,4 +1,4 @@
-package spmf;
+package spmf.executor;
 
 import utils.PropertyValues;
 

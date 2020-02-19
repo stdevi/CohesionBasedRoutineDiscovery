@@ -1,12 +1,12 @@
-package utils.parser;
+package log.parser;
 
-import entity.event.Event;
-import entity.event.XMLEvent;
+import log.entity.Event;
+import log.entity.XMLEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import utils.EventUtils;
+import log.utils.EventUtils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,14 +47,14 @@ public class XMLLogParser implements LogParser {
 
         for (int i = 0; i < auditTrailEntries.getLength(); i++) {
             Element auditTrailEntry = (Element) auditTrailEntries.item(i);
-            events.add(parseAuditTrailEntry(auditTrailEntry, i, caseId));
+            events.add(parseAuditTrailEntry(auditTrailEntry, caseId));
         }
     }
 
-    private Event parseAuditTrailEntry(Element auditTrailEntry, int eid, int caseId) {
+    private Event parseAuditTrailEntry(Element auditTrailEntry, int caseId) {
         Element data = (Element) auditTrailEntry.getElementsByTagName("Data").item(0);
         NodeList attributes = data.getElementsByTagName("attribute");
-        Event event = new XMLEvent(eid, String.valueOf(caseId));
+        Event event = new XMLEvent(String.valueOf(caseId));
         for (int j = 0; j < attributes.getLength(); j++) {
             Element attribute = (Element) attributes.item(j);
             assembleActionFromAttribute(attribute, event);

@@ -1,4 +1,4 @@
-package entity.event;
+package log.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,8 +6,7 @@ import java.util.List;
 
 public class CSVEvent extends Event {
 
-    public CSVEvent(List<String> attributes, String[] values, int eid) {
-        this.eid = eid;
+    public CSVEvent(List<String> attributes, String[] values) {
         String temp;
         this.attributes = new ArrayList<>(attributes);
         this.caseID = attributes.contains("caseID") ? values[attributes.indexOf("caseID")] : "";

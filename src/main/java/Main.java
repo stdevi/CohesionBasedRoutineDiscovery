@@ -1,19 +1,17 @@
 import cohesion.CohesionParser;
 import cohesion.CohesionScorer;
-import entity.Pattern;
-import entity.Sequence;
-import entity.event.Event;
-import org.apache.commons.io.FilenameUtils;
-import spmf.SPMFAlgorithmName;
-import spmf.SPMFExecutor;
-import spmf.SPMFParser;
-import utils.Cutoff;
-import utils.Formatter;
+import cohesion.Cutoff;
+import cohesion.entity.Pattern;
+import cohesion.entity.Sequence;
+import log.entity.Event;
+import log.parser.LogParser;
+import log.parser.LogParserFactory;
+import spmf.executor.SPMFAlgorithmName;
+import spmf.executor.SPMFExecutor;
+import spmf.parser.SPMFParser;
+import spmf.utils.SPMFFormatter;
 import utils.PropertyValues;
 import utils.Writer;
-import utils.parser.CSVLogParser;
-import utils.parser.LogParser;
-import utils.parser.XMLLogParser;
 
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class Main {
     public static void main(String[] args) {
         String logFile = args[0];
 
-        LogParser logParser = getLogParser(logFile);
+        LogParser logParser = LogParserFactory.getLogParser(logFile);
         List<Event> events = logParser.parseLogFile(logFile);
         StringBuilder spmfInput = SPMFParser.transformActionsToSPMF(events);
 
@@ -49,21 +47,7 @@ public class Main {
     }
 
     private static void writeInputFile(StringBuilder data) {
-        StringBuilder spmfFormattedInput = Formatter.formatData(data);
+        StringBuilder spmfFormattedInput = SPMFFormatter.formatData(data);
         Writer.writeFile(spmfFormattedInput, PropertyValues.getProperty("spmfFormattedInputFilePath"));
-    }
-
-    private static LogParser getLogParser(String logFile) {
-        LogParser logParser;
-
-        if (FilenameUtils.isExtension(logFile, "mxml")) {
-            logParser = new XMLLogParser();
-        } else if (FilenameUtils.isExtension(logFile, "csv")) {
-            logParser = new CSVLogParser();
-        } else {
-            throw new IllegalArgumentException("Wrong log file extension!");
-        }
-
-        return logParser;
     }
 }

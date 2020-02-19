@@ -1,7 +1,7 @@
 package cohesion;
 
-import entity.Pattern;
-import entity.Sequence;
+import cohesion.entity.Pattern;
+import cohesion.entity.Sequence;
 
 import java.io.IOException;
 import java.nio.file.Files;

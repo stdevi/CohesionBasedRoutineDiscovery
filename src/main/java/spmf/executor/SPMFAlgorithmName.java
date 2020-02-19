@@ -1,4 +1,4 @@
-package spmf;
+package spmf.executor;
 
 public enum SPMFAlgorithmName {
     PrefixSpan("PrefixSpan"),

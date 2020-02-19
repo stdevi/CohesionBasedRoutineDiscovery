@@ -1,7 +1,7 @@
 package cohesion;
 
-import entity.Pattern;
-import entity.Sequence;
+import cohesion.entity.Pattern;
+import cohesion.entity.Sequence;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

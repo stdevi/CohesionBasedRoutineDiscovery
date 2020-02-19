@@ -1,6 +1,6 @@
-package utils;
+package log.utils;
 
-import entity.event.Event;
+import log.entity.Event;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,20 +14,24 @@ public class EventUtils {
     public static List<String> getContextAttributes(List<Event> events, Double threshold, Boolean considerMissingValues) {
         List<String> context = new ArrayList<>();
         List<String> attributes = new ArrayList<>(events.get(0).getAttributes());
-        if (events.get(0).payload.containsKey("target.row"))
+        if (events.get(0).payload.containsKey("target.row")) {
             attributes.add("target.row");
-        if (events.get(0).payload.containsKey("target.column"))
+        }
+        if (events.get(0).payload.containsKey("target.column")) {
             attributes.add("target.column");
+        }
 
         attributes.stream().filter(attribute -> !attribute.equals("timeStamp") && !attribute.equals("eventType")).forEach(attribute -> {
             List<String> uniqueValues = events.stream().map(el -> el.payload.get(attribute)).distinct().collect(Collectors.toList());
             double variance = (double) (uniqueValues.size() - 1) / events.size();
-            if ((attribute.equals("target.innerText") || attribute.equals("target.name") || variance > 0.0) && variance <= threshold) {
+            if ((attribute.equals("target.innerText") || attribute.equals("target.name") || variance > 0.0) && variance < threshold) {
                 if (!considerMissingValues) {
-                    if (!uniqueValues.contains(null))
+                    if (uniqueValues.size() - 1 > 1 || attribute.equals("target.innerText") || attribute.equals("target.name")) {
                         context.add(attribute);
-                } else
+                    }
+                } else {
                     context.add(attribute);
+                }
             }
         });
 

@@ -1,9 +1,9 @@
-package utils;
+package spmf.utils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Formatter {
+public class SPMFFormatter {
 
     public static StringBuilder formatData(StringBuilder data) {
         Map<String, String> actionCode = new HashMap<>();

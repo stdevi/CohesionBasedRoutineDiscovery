@@ -1,4 +1,4 @@
-package entity.event;
+package log.entity;
 
 import java.util.List;
 import java.util.Map;
@@ -6,7 +6,6 @@ import java.util.Map;
 public abstract class Event {
     public Map<String, String> payload;
     public Map<String, String> context;
-    int eid;
     String caseID;
     String eventType;
     String timestamp;
@@ -53,6 +52,6 @@ public abstract class Event {
     }
 
     public String toString() {
-        return "({" + this.caseID + "}, " + this.eid + ", " + this.eventType + ", " + this.timestamp + ", " + payload + ")";
+        return "({" + this.caseID + "}, " + ", " + this.eventType + ", " + this.timestamp + ", " + payload + ")";
     }
 }

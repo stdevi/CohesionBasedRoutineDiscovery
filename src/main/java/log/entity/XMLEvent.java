@@ -1,12 +1,11 @@
-package entity.event;
+package log.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class XMLEvent extends Event {
 
-    public XMLEvent(int eid, String caseId) {
-        this.eid = eid;
+    public XMLEvent(String caseId) {
         this.caseID = caseId;
         this.attributes = new ArrayList<>();
         this.payload = new HashMap<>();

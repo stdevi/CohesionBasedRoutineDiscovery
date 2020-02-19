@@ -1,4 +1,4 @@
-package entity;
+package cohesion.entity;
 
 import java.util.List;
 

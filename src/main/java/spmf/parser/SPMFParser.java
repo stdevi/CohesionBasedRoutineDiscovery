@@ -1,6 +1,6 @@
-package spmf;
+package spmf.parser;
 
-import entity.event.Event;
+import log.entity.Event;
 
 import java.util.HashMap;
 import java.util.List;

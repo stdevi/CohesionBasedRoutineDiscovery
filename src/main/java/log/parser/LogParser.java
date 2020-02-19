@@ -1,6 +1,6 @@
-package utils.parser;
+package log.parser;
 
-import entity.event.Event;
+import log.entity.Event;
 
 import java.util.List;
 

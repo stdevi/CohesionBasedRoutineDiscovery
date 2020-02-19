@@ -1,8 +1,8 @@
-package utils.parser;
+package log.parser;
 
-import entity.event.CSVEvent;
-import entity.event.Event;
-import utils.EventUtils;
+import log.entity.CSVEvent;
+import log.entity.Event;
+import log.utils.EventUtils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -26,7 +26,6 @@ public class CSVLogParser implements LogParser {
         List<String> attributes = new ArrayList<>();
         List<Event> events = new ArrayList<>();
         int counter = 0;
-        int eid = 0;
         String line;
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -41,8 +40,7 @@ public class CSVLogParser implements LogParser {
                     Collections.addAll(attributes, row);
                 } else {
                     Arrays.setAll(row, i -> row[i].matches("\"+") ? "\"\"" : row[i].replaceAll("^\"(.*)\"$", "$1"));
-                    events.add(new CSVEvent(attributes, row, eid));
-                    eid++;
+                    events.add(new CSVEvent(attributes, row));
                     counter++;
                 }
             }
