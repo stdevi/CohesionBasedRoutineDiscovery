@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils;
 import spmf.SPMFAlgorithmName;
 import spmf.SPMFExecutor;
 import spmf.SPMFParser;
+import utils.Cutoff;
 import utils.Formatter;
 import utils.PropertyValues;
 import utils.Writer;
@@ -38,7 +39,13 @@ public class Main {
         // Generate scores
         CohesionScorer scorer = new CohesionScorer();
         List<Pattern> scoredPatterns = scorer.scorePattern(patterns, sequences);
+        System.out.println("\nAll patterns: ");
         scoredPatterns.forEach(System.out::println);
+
+        double cutOffThreshold = 15;
+        List<Pattern> topPatterns = Cutoff.cutPatterns(scoredPatterns, cutOffThreshold);
+        System.out.println("\nTop patterns (cut-off = " + cutOffThreshold + "%): ");
+        topPatterns.forEach(System.out::println);
     }
 
     private static void writeInputFile(StringBuilder data) {
