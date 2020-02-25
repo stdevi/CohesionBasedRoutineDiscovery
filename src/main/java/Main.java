@@ -6,6 +6,8 @@ import cohesion.entity.Sequence;
 import log.entity.Event;
 import log.parser.LogParser;
 import log.parser.LogParserFactory;
+import metrics.Coverage;
+import metrics.CumulativeCoverage;
 import spmf.executor.SPMFAlgorithmName;
 import spmf.executor.SPMFExecutor;
 import spmf.parser.SPMFParser;
@@ -44,6 +46,11 @@ public class Main {
         List<Pattern> topPatterns = Cutoff.cutPatterns(scoredPatterns, cutOffThreshold);
         System.out.println("\nTop patterns (cut-off = " + cutOffThreshold + "%): ");
         topPatterns.forEach(System.out::println);
+
+        // Find coverage
+        Coverage coverage = new CumulativeCoverage();
+        coverage.findCoveragePerPattern(topPatterns, sequences);
+        coverage.printCoverage();
     }
 
     private static void writeInputFile(StringBuilder data) {
