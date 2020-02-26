@@ -29,6 +29,8 @@ public interface Coverage {
     }
 
 
-    void findCoveragePerPattern(List<Pattern> patterns, List<Sequence> sequences);
+    void findIndividualCoveragePerPattern(List<Pattern> patterns, List<Sequence> sequences);
+
+    void findCumulativeCoveragePerPattern(List<Pattern> patterns, List<Sequence> sequences);
 
 }

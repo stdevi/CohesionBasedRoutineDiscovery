@@ -49,7 +49,7 @@ public class Main {
 
         // Find coverage
         Coverage coverage = new CumulativeCoverage();
-        coverage.findCoveragePerPattern(topPatterns, sequences);
+        coverage.findCumulativeCoveragePerPattern(topPatterns, sequences);
         coverage.printCoverage();
     }
 
