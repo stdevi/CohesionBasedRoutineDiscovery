@@ -1,12 +1,18 @@
 package cohesion.entity;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Pattern {
     private List<String> items;
     private int support;
     private int cohesionScore;
+    private boolean automatable = false;
+    private Map<Pair<String, String>, String> transformations = new HashMap<>();
 
     public Pattern() {
         items = new ArrayList<>();
@@ -51,6 +57,18 @@ public class Pattern {
 
     public int getLength() {
         return items.size();
+    }
+
+    public Map<Pair<String, String>, String> getTransformations() {
+        return transformations;
+    }
+
+    public boolean isAutomatable() {
+        return automatable;
+    }
+
+    public void setAutomatable(boolean automatable) {
+        this.automatable = automatable;
     }
 
     @Override

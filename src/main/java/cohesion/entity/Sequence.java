@@ -12,6 +12,11 @@ public class Sequence {
         this.id = id;
     }
 
+    public Sequence(Sequence sequence) {
+        this.id = sequence.getId();
+        this.items = new ArrayList<>(sequence.getItems());
+    }
+
     public Sequence(List<String> items) {
         this.items = items;
     }

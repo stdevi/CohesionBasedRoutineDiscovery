@@ -3,6 +3,7 @@ import cohesion.CohesionScorer;
 import cohesion.Cutoff;
 import cohesion.entity.Pattern;
 import cohesion.entity.Sequence;
+import dataflow.Foofah;
 import log.entity.Event;
 import log.parser.LogParser;
 import log.parser.LogParserFactory;
@@ -16,6 +17,8 @@ import utils.PropertyValues;
 import utils.Writer;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,6 +27,9 @@ public class Main {
         LogParser logParser = LogParserFactory.getLogParser(logFile);
         List<Event> events = logParser.parseLogFile(logFile);
         StringBuilder spmfInput = SPMFParser.transformActionsToSPMF(events);
+
+        // TODO: Delete the sulist in the production version, for now it is used for dev purposes.
+        Map<String, List<Event>> cases = events.subList(0, 30).stream().collect(Collectors.groupingBy(Event::getCaseID));
 
         // Write formatted input with aliases
         writeInputFile(spmfInput);
@@ -42,6 +48,7 @@ public class Main {
         System.out.println("\nAll patterns: ");
         scoredPatterns.forEach(System.out::println);
 
+        // Find top 15% patterns
         double cutOffThreshold = 15;
         List<Pattern> topPatterns = Cutoff.cutPatterns(scoredPatterns, cutOffThreshold);
         System.out.println("\nTop patterns (cut-off = " + cutOffThreshold + "%): ");
@@ -51,6 +58,11 @@ public class Main {
         Coverage coverage = new CumulativeCoverage();
         coverage.findCumulativeCoveragePerPattern(topPatterns, sequences);
         coverage.printCoverage();
+
+        // Data transformations
+        Foofah foofah = new Foofah();
+        topPatterns.forEach(p -> foofah.setPatternTransformations(cases, p));
+        topPatterns.forEach(p -> System.out.printf("\n%s\n%s", p, p.isAutomatable()));
     }
 
     private static void writeInputFile(StringBuilder data) {
