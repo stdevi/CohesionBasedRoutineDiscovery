@@ -1,4 +1,4 @@
-package dataflow.entity;
+package foofah.entity;
 
 import java.util.Collections;
 import java.util.List;

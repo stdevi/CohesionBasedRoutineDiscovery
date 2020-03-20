@@ -1,6 +1,6 @@
-package dataflow.utils;
+package foofah.utils;
 
-import dataflow.entity.Transformation;
+import foofah.entity.Transformation;
 
 import java.util.ArrayList;
 import java.util.Collections;

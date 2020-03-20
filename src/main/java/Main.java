@@ -3,18 +3,17 @@ import cohesion.CohesionScorer;
 import cohesion.Cutoff;
 import cohesion.entity.Pattern;
 import cohesion.entity.Sequence;
-import dataflow.Foofah;
+import foofah.Foofah;
 import log.entity.Event;
 import log.parser.LogParser;
 import log.parser.LogParserFactory;
-import metrics.Coverage;
-import metrics.CumulativeCoverage;
 import spmf.executor.SPMFAlgorithmName;
 import spmf.executor.SPMFExecutor;
 import spmf.parser.SPMFParser;
 import spmf.utils.SPMFFormatter;
 import utils.PropertyValues;
 import utils.Writer;
+import weka.WekaExecutor;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class Main {
         StringBuilder spmfInput = SPMFParser.transformActionsToSPMF(events);
 
         // TODO: Delete the sulist in the production version, for now it is used for dev purposes.
-        Map<String, List<Event>> cases = events.subList(0, 30).stream().collect(Collectors.groupingBy(Event::getCaseID));
+        Map<String, List<Event>> cases = events.subList(0, 300).stream().collect(Collectors.groupingBy(Event::getCaseID));
 
         // Write formatted input with aliases
         writeInputFile(spmfInput);
@@ -55,14 +54,21 @@ public class Main {
         topPatterns.forEach(System.out::println);
 
         // Find coverage
-        Coverage coverage = new CumulativeCoverage();
-        coverage.findCumulativeCoveragePerPattern(topPatterns, sequences);
-        coverage.printCoverage();
+//        Coverage coverage = new CumulativeCoverage();
+//        coverage.findCumulativeCoveragePerPattern(topPatterns, sequences);
+//        coverage.printCoverage();
 
         // Data transformations
         Foofah foofah = new Foofah();
-        topPatterns.forEach(p -> foofah.setPatternTransformations(cases, p));
-        topPatterns.forEach(p -> System.out.printf("\n%s\n%s", p, p.isAutomatable()));
+        foofah.setPatternTransformations(cases, topPatterns.get(0));
+//        topPatterns.forEach(p -> foofah.setPatternTransformations(cases, p));
+//        topPatterns.forEach(p -> System.out.printf("\n%s\n%s", p, p.isAutomatable()));
+
+        //JRipper Conditioning
+        WekaExecutor wekaExecutor = new WekaExecutor();
+        wekaExecutor.findRulesFromWekaFile(cases, topPatterns.get(0));
+
+        System.out.println("");
     }
 
     private static void writeInputFile(StringBuilder data) {

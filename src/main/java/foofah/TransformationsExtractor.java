@@ -1,7 +1,7 @@
-package dataflow;
+package foofah;
 
 import cohesion.entity.Pattern;
-import dataflow.entity.Transformation;
+import foofah.entity.Transformation;
 import log.entity.Event;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -62,7 +62,7 @@ public class TransformationsExtractor {
 
             for (int i = events.size() - 1; i >= 0; i--) {
                 if (writeActions.contains(events.get(i).getEventType()) && !targets.contains(events.get(i).payload.get("target.name"))) {
-                    String target = events.get(i).payload.containsKey("target.id") ? events.get(i).payload.get("target.id") : events.get(i).payload.get("target.name");
+                    String target = events.get(i).payload.containsKey("target.name") ? events.get(i).payload.get("target.name") : events.get(i).payload.get("target.id");
                     String output = events.get(i).payload.get("target.value").replaceAll("\\P{Print}", " ");
 
                     StringBuilder source = new StringBuilder();
@@ -76,15 +76,16 @@ public class TransformationsExtractor {
                             for (int k = j; k >= 0; k--) {
                                 if (readActions.contains(events.get(k).getEventType())) {
                                     if (source.toString().equals("")) {
-                                        if (events.get(k).payload.containsKey("target.id"))
-                                            source = new StringBuilder(events.get(k).getEventType() + "+" + events.get(k).payload.get("target.id"));
-                                        else
+                                        if (events.get(k).payload.containsKey("target.name"))
                                             source = new StringBuilder(events.get(k).getEventType() + "+" + events.get(k).payload.get("target.name"));
-                                    } else {
-                                        if (events.get(k).payload.containsKey("target.id"))
-                                            source.append(",").append(events.get(k).getEventType()).append("+").append(events.get(k).payload.get("target.id"));
                                         else
+                                        source = new StringBuilder(events.get(k).getEventType() + "+" + events.get(k).payload.get("target.id"));
+                                    } else {
+                                        if (events.get(k).payload.containsKey("target.name"))
                                             source.append(",").append(events.get(k).getEventType()).append("+").append(events.get(k).payload.get("target.name"));
+                                        else
+                                            source.append(",").append(events.get(k).getEventType()).append("+").append(events.get(k).payload.get("target.id"));
+
                                     }
                                     input.add(events.get(k).payload.get("target.value").replaceAll("\\P{Print}", " "));
                                     break;

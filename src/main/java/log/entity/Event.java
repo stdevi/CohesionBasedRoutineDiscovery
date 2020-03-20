@@ -51,6 +51,10 @@ public abstract class Event {
         return attributes;
     }
 
+    public String getEventNameAndContext() {
+        return getEventType() + "+" + getContext().values().toArray()[0];
+    }
+
     public String toString() {
         return "({" + this.caseID + "}, " + ", " + this.eventType + ", " + this.timestamp + ", " + payload + ")";
     }

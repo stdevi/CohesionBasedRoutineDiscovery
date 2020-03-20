@@ -1,4 +1,4 @@
-package dataflow.utils;
+package foofah.utils;
 
 import utils.PropertyValues;
 
@@ -14,7 +14,7 @@ public class PythonExecutor {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("bash", "-c", "python " + foofahPythonScriptPath +
-                " --input " + transformationFilePath + " --timeout 3600");
+                " --input " + transformationFilePath + " --timeout 120");
 
         try {
             StringBuilder sb = new StringBuilder();

@@ -71,6 +71,10 @@ public class Pattern {
         this.automatable = automatable;
     }
 
+    public double getRAI() {
+        return (double) transformations.entrySet().stream().filter(entry -> entry.getValue() != null).count() / transformations.size();
+    }
+
     @Override
     public String toString() {
         return "Pattern{" +

@@ -48,6 +48,7 @@ public class CohesionScorer {
 
     private List<String> getOutliers(Pattern pattern, Sequence sequence) {
         List<String> window = getMinimalWindow(pattern, sequence);
+
         return getPatternOutliersInWindow(pattern, window);
     }
 

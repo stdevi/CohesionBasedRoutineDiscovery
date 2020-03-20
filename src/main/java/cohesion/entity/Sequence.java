@@ -1,7 +1,10 @@
 package cohesion.entity;
 
+import log.entity.Event;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Sequence {
     private int id;
@@ -43,6 +46,21 @@ public class Sequence {
                 "items=" + items +
                 ", id=" + id +
                 '}';
+    }
+
+    public boolean contains(Pattern pattern) {
+        List<String> patternEvents = new ArrayList<>(pattern.getItems());
+        List<String> sequenceEvents = new ArrayList<>(items);
+
+        for (String patternEvent : patternEvents) {
+            if (sequenceEvents.contains(patternEvent)) {
+                sequenceEvents.remove(patternEvent);
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public boolean containsPattern(Pattern pattern) {

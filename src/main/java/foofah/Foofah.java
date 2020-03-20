@@ -1,9 +1,9 @@
-package dataflow;
+package foofah;
 
 import cohesion.entity.Pattern;
-import dataflow.entity.Transformation;
-import dataflow.utils.PythonExecutor;
-import dataflow.utils.Tokenizer;
+import foofah.entity.Transformation;
+import foofah.utils.PythonExecutor;
+import foofah.utils.Tokenizer;
 import log.entity.Event;
 import org.apache.commons.lang3.tuple.Pair;
 import utils.PropertyValues;
@@ -42,6 +42,8 @@ public class Foofah {
         for (String pattern : tokenizedTransformations.keySet()) {
             String transformation = getFoofahTransformation(getSeed(1.0 / tokenizedTransformations.get(pattern).size(),
                     tokenizedTransformations.get(pattern)));
+
+            if (transformation == null) return null;
 
             groupedPatterns.put(transformation, groupedPatterns.containsKey(transformation) ?
                     Stream.concat(groupedPatterns.get(transformation).stream(), Stream.of(pattern)).collect(Collectors.toList()) :
