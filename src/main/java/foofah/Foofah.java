@@ -1,6 +1,7 @@
 package foofah;
 
 import cohesion.entity.Pattern;
+import cohesion.entity.PatternItem;
 import foofah.entity.Transformation;
 import foofah.utils.PythonExecutor;
 import foofah.utils.Tokenizer;
@@ -19,7 +20,7 @@ public class Foofah {
 
     public void setPatternTransformations(Map<String, List<Event>> cases, Pattern pattern) {
         TransformationsExtractor extractor = new TransformationsExtractor();
-        Map<Pair<String, String>, List<Transformation>> transformationsPerReadWrite = extractor.getPatternTransformations(cases, pattern);
+        Map<Pair<PatternItem, PatternItem>, List<Transformation>> transformationsPerReadWrite = extractor.getPatternTransformations(cases, pattern);
 
         transformationsPerReadWrite.forEach((readWritePair, transformations) -> {
             HashMap<String, List<Transformation>> cluster = Tokenizer.clusterByPattern(transformations);
@@ -30,8 +31,7 @@ public class Foofah {
         });
 
         // Check is the pattern is automatable
-        if (pattern.getTransformations().entrySet().stream().noneMatch(entry ->
-                entry.getValue() == null || entry.getValue().equals("null"))) {
+        if (pattern.getTransformations().entrySet().stream().noneMatch(entry -> entry.getValue().equals(""))) {
             pattern.setAutomatable(true);
         }
     }
@@ -43,7 +43,7 @@ public class Foofah {
             String transformation = getFoofahTransformation(getSeed(1.0 / tokenizedTransformations.get(pattern).size(),
                     tokenizedTransformations.get(pattern)));
 
-            if (transformation == null) return null;
+            if (transformation == null) return "";
 
             groupedPatterns.put(transformation, groupedPatterns.containsKey(transformation) ?
                     Stream.concat(groupedPatterns.get(transformation).stream(), Stream.of(pattern)).collect(Collectors.toList()) :

@@ -1,10 +1,7 @@
 package cohesion.entity;
 
-import log.entity.Event;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Sequence {
     private int id;
@@ -49,7 +46,7 @@ public class Sequence {
     }
 
     public boolean contains(Pattern pattern) {
-        List<String> patternEvents = new ArrayList<>(pattern.getItems());
+        List<String> patternEvents = new ArrayList<>(pattern.getItemsValues());
         List<String> sequenceEvents = new ArrayList<>(items);
 
         for (String patternEvent : patternEvents) {
@@ -65,7 +62,7 @@ public class Sequence {
 
     public boolean containsPattern(Pattern pattern) {
         List<String> sequenceItems = new ArrayList<>(items);
-        for (String patternItem : pattern.getItems()) {
+        for (String patternItem : pattern.getItemsValues()) {
             if (sequenceItems.contains(patternItem)) {
                 sequenceItems.remove(patternItem);
             } else {
@@ -76,10 +73,10 @@ public class Sequence {
         return true;
     }
 
-    public List<String> removePatternElements(Pattern pattern) {
+    public List<PatternItem> removePatternElements(Pattern pattern) {
         List<String> sequenceItems = new ArrayList<>(items);
         if (containsPattern(pattern)) {
-            pattern.getItems().forEach(sequenceItems::remove);
+            pattern.getItemsValues().forEach(sequenceItems::remove);
             setItems(sequenceItems);
 
             return pattern.getItems();

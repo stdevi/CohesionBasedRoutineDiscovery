@@ -22,9 +22,9 @@ public class WekaFormatter {
             FileWriter writer = new FileWriter(file);
 
             StringBuilder sb = new StringBuilder();
-            sb.append("@relation").append(" data\n");
-            sb.append("\n").append(getFormattedAttributes(wekaData.getValuesPerAttribute()));
-            sb.append("\n@data\n").append(getFormattedInstances(wekaData.getInstances()));
+//            sb.append("@relation").append(" data\n");
+//            sb.append("\n").append(getFormattedAttributes(wekaData.getValuesPerAttribute()));
+            sb/*.append("\n@data\n")*/.append(getFormattedInstances(wekaData.getInstances()));
 
             writer.write(sb.toString());
             writer.close();

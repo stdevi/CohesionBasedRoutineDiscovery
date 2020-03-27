@@ -1,6 +1,7 @@
 package cohesion;
 
 import cohesion.entity.Pattern;
+import cohesion.entity.PatternItem;
 import cohesion.entity.Sequence;
 
 import java.util.*;
@@ -54,7 +55,7 @@ public class CohesionScorer {
 
     private List<String> getPatternOutliersInWindow(Pattern pattern, List<String> window) {
         return window.stream()
-                .filter(el -> !new TreeSet<>(pattern.getItems()).contains(el))
+                .filter(el -> !new TreeSet<>(pattern.getItemsValues()).contains(el))
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +71,7 @@ public class CohesionScorer {
         List<List<String>> windows = new ArrayList<>();
         List<String> window = new ArrayList<>();
         Map<String, Boolean> patternMap = new HashMap<>();
-        for (String event : pattern.getItems()) {
+        for (String event : pattern.getItemsValues()) {
             patternMap.putIfAbsent(event, false);
         }
 
@@ -100,7 +101,7 @@ public class CohesionScorer {
 
     private int indexOfFirstOccurrence(Pattern pattern, Sequence sequence) {
         List<Integer> indexes = new ArrayList<>();
-        Set<String> uniquePatternItems = new TreeSet<>(pattern.getItems());
+        Set<String> uniquePatternItems = new TreeSet<>(pattern.getItemsValues());
 
         for (String item : uniquePatternItems) {
             indexes.add(sequence.getItems().indexOf(item));
