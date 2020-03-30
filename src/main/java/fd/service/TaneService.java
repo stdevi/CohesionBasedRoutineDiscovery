@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class TaneService {
     private List<List<String>> instances;
@@ -30,9 +31,14 @@ public class TaneService {
         instances.forEach(instance -> {
             String dependerValue = instance.get(dependerIdx);
             dependeeValuesPerDepender.putIfAbsent(dependerValue, new ArrayList<>());
-            List<String> values = new ArrayList<>();
-            dependee.forEach(d -> values.add(d == -1 ? instance.get(dependerIdx) : instance.get(d)));
-            dependeeValuesPerDepender.get(dependerValue).add(values);
+
+            IntStream.range(0, dependee.size()).forEach(i -> {
+                if (i >= dependeeValuesPerDepender.get(dependerValue).size()) {
+                    dependeeValuesPerDepender.get(dependerValue).add(new ArrayList<>());
+                }
+                Integer d = dependee.get(i);
+                dependeeValuesPerDepender.get(dependerValue).get(i).add(d == -1 ? instance.get(dependerIdx) : instance.get(d));
+            });
         });
 
         return dependeeValuesPerDepender;

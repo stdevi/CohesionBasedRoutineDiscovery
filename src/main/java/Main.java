@@ -4,7 +4,6 @@ import cohesion.Cutoff;
 import cohesion.entity.Pattern;
 import cohesion.entity.Sequence;
 import cohesion.service.PatternService;
-import foofah.Foofah;
 import log.entity.Event;
 import log.parser.LogParser;
 import log.parser.LogParserFactory;
@@ -58,19 +57,15 @@ public class Main {
 //        coverage.findCumulativeCoveragePerPattern(topPatterns, sequences);
 //        coverage.printCoverage();
 
-        // Data transformations
-        Foofah foofah = new Foofah();
-        foofah.setPatternTransformations(cases, topPatterns.get(0));
-//        topPatterns.forEach(p -> foofah.setPatternTransformations(cases, p));
-//        topPatterns.forEach(p -> System.out.printf("\n%s\n%s", p, p.isAutomatable()));
-
         //JRipper Conditioning
 //        WekaExecutor wekaExecutor = new WekaExecutor();
 //        wekaExecutor.findRulesFromWekaFile(cases, topPatterns.get(1));
 
         // Find pattern dependencies
         PatternService patternService = new PatternService();
+        patternService.setTransformations(cases, topPatterns.get(0));
         patternService.setDependencies(cases, topPatterns.get(0));
+        patternService.setAutomatability(topPatterns.get(0));
     }
 
     private static void writeInputFile(StringBuilder data) {

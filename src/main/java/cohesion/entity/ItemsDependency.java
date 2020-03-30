@@ -6,7 +6,7 @@ import java.util.Map;
 public class ItemsDependency {
     private PatternItem depender;
     private List<PatternItem> dependee;
-    private Map<String, List<List<String>>> dependeeValuesPerDepender;
+    private Map<String, String> dependeeValuesPerDepender;
 
     public PatternItem getDepender() {
         return depender;
@@ -24,11 +24,11 @@ public class ItemsDependency {
         this.dependee = dependee;
     }
 
-    public Map<String, List<List<String>>> getDependeeValuesPerDepender() {
+    public Map<String, String> getDependeeValuesPerDepender() {
         return dependeeValuesPerDepender;
     }
 
-    public void setDependeeValuesPerDepender(Map<String, List<List<String>>> dependeeValuesPerDepender) {
+    public void setDependeeValuesPerDepender(Map<String, String> dependeeValuesPerDepender) {
         this.dependeeValuesPerDepender = dependeeValuesPerDepender;
     }
 }

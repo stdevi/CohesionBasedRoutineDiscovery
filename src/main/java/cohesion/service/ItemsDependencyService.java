@@ -7,9 +7,7 @@ import fd.entity.TaneDependency;
 import fd.service.TaneService;
 import log.entity.Event;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ItemsDependencyService {
@@ -43,8 +41,22 @@ public class ItemsDependencyService {
         ItemsDependency dependency = new ItemsDependency();
         dependency.setDepender(depender);
         dependency.setDependee(dependee);
-        dependency.setDependeeValuesPerDepender(dependeeValuesPerDepender);
+        Map<String, String> uniqueDependeeValuesPerDepender = evaluateDependencyValues(dependeeValuesPerDepender);
+        dependency.setDependeeValuesPerDepender(uniqueDependeeValuesPerDepender);
 
         return dependency;
+    }
+
+    private Map<String, String> evaluateDependencyValues(Map<String, List<List<String>>> dependeeValuesPerDepender) {
+        Map<String, String> uniqueDependeeValuesPerDepender = new HashMap<>();
+        for (Map.Entry<String, List<List<String>>> entry : dependeeValuesPerDepender.entrySet()) {
+            for (List<String> valuesPerDependee : entry.getValue()) {
+                Set<String> uniqueDependeeValues = new HashSet<>(valuesPerDependee);
+                uniqueDependeeValuesPerDepender.put(entry.getKey(), uniqueDependeeValues.size() > 1 ?
+                        null : uniqueDependeeValues.iterator().next());
+            }
+        }
+
+        return uniqueDependeeValuesPerDepender;
     }
 }

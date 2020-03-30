@@ -96,6 +96,10 @@ public class Pattern {
                 .collect(Collectors.toList());
     }
 
+    public void setTransformations(Map<Pair<PatternItem, PatternItem>, String> transformations) {
+        this.transformations = transformations;
+    }
+
     @Override
     public String toString() {
         return "Pattern{" +

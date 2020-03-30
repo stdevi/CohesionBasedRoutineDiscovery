@@ -16,9 +16,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Foofah {
+public class FoofahService {
 
-    public void setPatternTransformations(Map<String, List<Event>> cases, Pattern pattern) {
+    public Map<Pair<PatternItem, PatternItem>, String> findTransformations(Map<String, List<Event>> cases, Pattern pattern) {
+        Map<Pair<PatternItem, PatternItem>, String> patternTransformations = new HashMap<>();
         TransformationsExtractor extractor = new TransformationsExtractor();
         Map<Pair<PatternItem, PatternItem>, List<Transformation>> transformationsPerReadWrite = extractor.getPatternTransformations(cases, pattern);
 
@@ -27,13 +28,10 @@ public class Foofah {
             String transformation = getFoofahPatternsTransformation(cluster);
             System.out.println(readWritePair);
             System.out.println(transformation);
-            pattern.getTransformations().put(readWritePair, transformation);
+            patternTransformations.put(readWritePair, transformation);
         });
 
-        // Check is the pattern is automatable
-        if (pattern.getTransformations().entrySet().stream().noneMatch(entry -> entry.getValue().equals(""))) {
-            pattern.setAutomatable(true);
-        }
+        return patternTransformations;
     }
 
     public String getFoofahPatternsTransformation(HashMap<String, List<Transformation>> tokenizedTransformations) {
