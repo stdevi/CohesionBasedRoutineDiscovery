@@ -28,12 +28,12 @@ public class PatternService {
     }
 
     public void setAutomatability(Pattern pattern) {
-        if (pattern.getTransformations() == null || pattern.getTransformations().values().stream().noneMatch(t -> t.equals(""))) {
-            pattern.setAutomatable(true);
-        } else if (pattern.getItemsDependencies().stream().anyMatch(d -> d.getDependeeValuesPerDepender().isEmpty())) {
-            pattern.setAutomatable(false);
-        } else {
-            pattern.setAutomatable(true);
-        }
+        boolean areTransformationsValid = pattern.getTransformations() == null ||
+                pattern.getTransformations().values().stream().noneMatch(t -> t.equals(""));
+
+        boolean areFunctionalDependenciesValid = pattern.getItemsDependencies().stream().noneMatch(d ->
+                d.getDependerPerDependeeValues().containsValue(null));
+
+        pattern.setAutomatable(areTransformationsValid || areFunctionalDependenciesValid);
     }
 }

@@ -1,1 +1,1 @@
-{"InputTable": [["Ireland"]], "OutputTable": [["Ireland"]]}
+{"InputTable": [["Adam", "Adam", "Nickolson", "Nickolson"]], "OutputTable": [["Adam Nickolson"]]}

@@ -52,7 +52,11 @@ public abstract class Event {
     }
 
     public String getEventNameAndContext() {
-        return getEventType() + "+" + getContext().values().toArray()[0];
+        if (getContext().size() > 0) {
+            return getEventType() + "+" + getContext().values().toArray()[0];
+        } else {
+            return getEventType();
+        }
     }
 
     public String toString() {

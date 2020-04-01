@@ -41,22 +41,20 @@ public class ItemsDependencyService {
         ItemsDependency dependency = new ItemsDependency();
         dependency.setDepender(depender);
         dependency.setDependee(dependee);
-        Map<String, String> uniqueDependeeValuesPerDepender = evaluateDependencyValues(dependeeValuesPerDepender);
-        dependency.setDependeeValuesPerDepender(uniqueDependeeValuesPerDepender);
+        Map<List<String>, String> uniqueDependerPerDependee = evaluateDependencyValues(dependeeValuesPerDepender);
+        dependency.setDependerPerDependee(uniqueDependerPerDependee);
 
         return dependency;
     }
 
-    private Map<String, String> evaluateDependencyValues(Map<String, List<List<String>>> dependeeValuesPerDepender) {
-        Map<String, String> uniqueDependeeValuesPerDepender = new HashMap<>();
-        for (Map.Entry<String, List<List<String>>> entry : dependeeValuesPerDepender.entrySet()) {
-            for (List<String> valuesPerDependee : entry.getValue()) {
-                Set<String> uniqueDependeeValues = new HashSet<>(valuesPerDependee);
-                uniqueDependeeValuesPerDepender.put(entry.getKey(), uniqueDependeeValues.size() > 1 ?
-                        null : uniqueDependeeValues.iterator().next());
-            }
-        }
+    private Map<List<String>, String> evaluateDependencyValues(Map<String, List<List<String>>> dependeeValuesPerDepender) {
+        Map<List<String>, String> uniqueDependerPerDependee = new HashMap<>();
+        dependeeValuesPerDepender.forEach((depender, dependeeValues) -> {
+            Set<List<String>> uniqueDependeeListValues = new HashSet<>(dependeeValues);
+            uniqueDependeeListValues.forEach(dependee -> uniqueDependerPerDependee.put(dependee,
+                    uniqueDependerPerDependee.containsKey(dependee) ? null : depender));
+        });
 
-        return uniqueDependeeValuesPerDepender;
+        return uniqueDependerPerDependee;
     }
 }

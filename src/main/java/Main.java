@@ -7,6 +7,7 @@ import cohesion.service.PatternService;
 import log.entity.Event;
 import log.parser.LogParser;
 import log.parser.LogParserFactory;
+import noise.NoiseGenerator;
 import spmf.executor.SPMFAlgorithmName;
 import spmf.executor.SPMFExecutor;
 import spmf.parser.SPMFParser;
@@ -22,12 +23,23 @@ public class Main {
     public static void main(String[] args) {
         String logFile = args[0];
 
+        NoiseGenerator noiseGenerator = new NoiseGenerator();
+        noiseGenerator.readLogFile(logFile);
+        noiseGenerator.addNoise(100);
+        noiseGenerator.writeLogFileWithNoise();
+
+        String logFileWithNoise = args[1];
         LogParser logParser = LogParserFactory.getLogParser(logFile);
         List<Event> events = logParser.parseLogFile(logFile);
         StringBuilder spmfInput = SPMFParser.transformActionsToSPMF(events);
 
         // TODO: Delete the sulist in the production version, for now it is used for dev purposes.
         Map<String, List<Event>> cases = events.subList(0, 300).stream().collect(Collectors.groupingBy(Event::getCaseID));
+
+        // Test converter
+//        Converter converter = new Converter();
+//        converter.parseCases(cases);
+//        converter.print();
 
         // Write formatted input with aliases
         writeInputFile(spmfInput);
@@ -66,6 +78,7 @@ public class Main {
         patternService.setTransformations(cases, topPatterns.get(0));
         patternService.setDependencies(cases, topPatterns.get(0));
         patternService.setAutomatability(topPatterns.get(0));
+        System.out.println(topPatterns.get(0).isAutomatable());
     }
 
     private static void writeInputFile(StringBuilder data) {
