@@ -7,6 +7,7 @@ import cohesion.service.PatternService;
 import log.entity.Event;
 import log.parser.LogParser;
 import log.parser.LogParserFactory;
+import metrics.CoverageService;
 import noise.NoiseGenerator;
 import spmf.executor.SPMFAlgorithmName;
 import spmf.executor.SPMFExecutor;
@@ -65,9 +66,8 @@ public class Main {
         topPatterns.forEach(System.out::println);
 
         // Find coverage
-//        Coverage coverage = new CumulativeCoverage();
-//        coverage.findCumulativeCoveragePerPattern(topPatterns, sequences);
-//        coverage.printCoverage();
+        CoverageService coverageService = new CoverageService();
+        coverageService.setPatternsCumulativeCoverage(sequences, topPatterns);
 
         //JRipper Conditioning
 //        WekaExecutor wekaExecutor = new WekaExecutor();

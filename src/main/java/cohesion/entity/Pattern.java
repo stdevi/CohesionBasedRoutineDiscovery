@@ -1,5 +1,6 @@
 package cohesion.entity;
 
+import lombok.Data;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Data
 public class Pattern {
     private List<PatternItem> items;
     private int support;
@@ -15,6 +17,7 @@ public class Pattern {
     private boolean automatable = false;
     private Map<Pair<PatternItem, PatternItem>, String> transformations = new HashMap<>();
     private List<ItemsDependency> itemsDependencies;
+    private double coverage;
 
     public Pattern() {
         items = new ArrayList<>();
@@ -33,60 +36,16 @@ public class Pattern {
         items.add(item);
     }
 
-    public List<PatternItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<PatternItem> items) {
-        this.items = items;
-    }
-
     public List<String> getItemsValues() {
         return items.stream().map(PatternItem::getValue).collect(Collectors.toList());
-    }
-
-    public int getSupport() {
-        return support;
-    }
-
-    public void setSupport(int support) {
-        this.support = support;
-    }
-
-    public int getCohesionScore() {
-        return cohesionScore;
-    }
-
-    public void setCohesionScore(int cohesionScore) {
-        this.cohesionScore = cohesionScore;
     }
 
     public int getLength() {
         return items.size();
     }
 
-    public Map<Pair<PatternItem, PatternItem>, String> getTransformations() {
-        return transformations;
-    }
-
-    public boolean isAutomatable() {
-        return automatable;
-    }
-
-    public void setAutomatable(boolean automatable) {
-        this.automatable = automatable;
-    }
-
     public double getRAI() {
         return (double) transformations.entrySet().stream().filter(entry -> entry.getValue() != null).count() / transformations.size();
-    }
-
-    public List<ItemsDependency> getItemsDependencies() {
-        return itemsDependencies;
-    }
-
-    public void setItemsDependencies(List<ItemsDependency> itemsDependencies) {
-        this.itemsDependencies = itemsDependencies;
     }
 
     public List<Pair<PatternItem, PatternItem>> getEmptyTransformationPairs() {
@@ -94,10 +53,6 @@ public class Pattern {
                 .filter(transformation -> transformation.getValue().isEmpty())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-    }
-
-    public void setTransformations(Map<Pair<PatternItem, PatternItem>, String> transformations) {
-        this.transformations = transformations;
     }
 
     @Override
