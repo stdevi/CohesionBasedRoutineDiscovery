@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class WekaParser {
 
     // Event attributes that should be given to JRipper
-    private static final List<String> payloadAttributes = Arrays.asList("url", "target.value", "content");
+    private static final List<String> payloadAttributes = Arrays.asList(/*"url",*/ "target.value", "content");
 
     private static Map<String, Set<String>> valuesPerAttribute = new LinkedHashMap<>();
     private static List<List<String>> instances = new ArrayList<>();
@@ -27,7 +27,7 @@ public class WekaParser {
         initInstances();
         // Find weka attributes and instances
         Map<String, Integer> patternItemsCounts = new HashMap<>();
-        pattern.getItems().forEach(patternItem -> extractWekaData(patternItemsCounts, patternItem));
+        pattern.getItems().forEach(patternItem -> extractWekaData(patternItemsCounts, patternItem.getValue()));
 
         WekaData wekaData = new WekaData();
         wekaData.setInstances(instances);
@@ -55,6 +55,11 @@ public class WekaParser {
                 for (String payloadAttribute : payloadAttributes) {
                     int patternItemIndex = patternItemsCounts.get(patternItem);
                     Map<String, String> payload = matchCaseEvents.get(patternItemIndex).getPayload();
+
+                    if (payloadAttribute.equals(payloadAttributes.get(1)) && payload.containsKey(payloadAttributes.get(0))){
+                        continue;
+                    }
+
                     // Check if event payload contains predefined payload attribute
                     if (payload.containsKey(payloadAttribute)) {
                         String attributeName = patternItem + "." + patternItemIndex + "." + payloadAttribute;

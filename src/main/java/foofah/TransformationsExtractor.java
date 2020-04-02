@@ -1,6 +1,7 @@
 package foofah;
 
 import cohesion.entity.Pattern;
+import cohesion.entity.PatternItem;
 import foofah.entity.Transformation;
 import log.entity.Event;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -21,18 +22,18 @@ public class TransformationsExtractor {
         readActions = new ArrayList<>(Collections.singletonList("copyCell"));
     }
 
-    public Map<Pair<String, String>, List<Transformation>> getPatternTransformations(Map<String, List<Event>> cases, Pattern pattern) {
+    public Map<Pair<PatternItem, PatternItem>, List<Transformation>> getPatternTransformations(Map<String, List<Event>> cases, Pattern pattern) {
         PatternEventsFlowExtractor extractor = new PatternEventsFlowExtractor();
-        Map<String, List<String>> writesPerReadEvents = extractor.extractWriteEventsPerReadEvent(pattern);
-        Map<Pair<String, String>, List<Transformation>> transformationsPerReadWrite = new HashMap<>();
+        Map<PatternItem, List<PatternItem>> writesPerReadEvents = extractor.extractWriteEventsPerReadEvent(pattern);
+        Map<Pair<PatternItem, PatternItem>, List<Transformation>> transformationsPerReadWrite = new HashMap<>();
         List<Transformation> examples = extractAllTransformations(cases);
 
         writesPerReadEvents.forEach((key, value) -> value.forEach(writeEvent -> {
             List<Transformation> transformations = examples.stream()
-                    .filter(e -> e.getSource().contains(key) && e.getTarget().contains(writeEvent))
+                    .filter(e -> e.getSource().contains(key.getValue()) && e.getTarget().contains(writeEvent.getValue()))
                     .collect(Collectors.toList());
             if (!transformations.isEmpty()) {
-                Pair<String, String> readWrite = new ImmutablePair<>(key, writeEvent);
+                Pair<PatternItem, PatternItem> readWrite = new ImmutablePair<>(key, writeEvent);
                 transformationsPerReadWrite.putIfAbsent(readWrite, transformations);
             }
         }));
@@ -69,10 +70,11 @@ public class TransformationsExtractor {
                     List<String> input = new ArrayList<>();
                     targets.add(target);
 
-                    for (int j = 0; j < i; j++) {
-                        if (bridgeActions.contains(events.get(j).getEventType()) &&
-                                (events.get(j).payload.getOrDefault("target.name", "").equals(target)) ||
-                                (events.get(j).payload.getOrDefault("target.id", "").equals(target))) {
+                    for (int j = 0; j <= i; j++) {
+                        Event e = events.get(j);
+                        if (/*bridgeActions.contains(events.get(j).getEventType()) &&*/
+                                (e.payload.getOrDefault("target.name", "").equals(target)) ||
+                                (e.payload.getOrDefault("target.id", "").equals(target))) {
                             for (int k = j; k >= 0; k--) {
                                 if (readActions.contains(events.get(k).getEventType())) {
                                     if (source.toString().equals("")) {

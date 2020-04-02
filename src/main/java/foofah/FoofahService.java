@@ -1,6 +1,7 @@
 package foofah;
 
 import cohesion.entity.Pattern;
+import cohesion.entity.PatternItem;
 import foofah.entity.Transformation;
 import foofah.utils.PythonExecutor;
 import foofah.utils.Tokenizer;
@@ -15,25 +16,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Foofah {
+public class FoofahService {
 
-    public void setPatternTransformations(Map<String, List<Event>> cases, Pattern pattern) {
+    public Map<Pair<PatternItem, PatternItem>, String> findTransformations(Map<String, List<Event>> cases, Pattern pattern) {
+        Map<Pair<PatternItem, PatternItem>, String> patternTransformations = new HashMap<>();
         TransformationsExtractor extractor = new TransformationsExtractor();
-        Map<Pair<String, String>, List<Transformation>> transformationsPerReadWrite = extractor.getPatternTransformations(cases, pattern);
+        Map<Pair<PatternItem, PatternItem>, List<Transformation>> transformationsPerReadWrite = extractor.getPatternTransformations(cases, pattern);
 
         transformationsPerReadWrite.forEach((readWritePair, transformations) -> {
             HashMap<String, List<Transformation>> cluster = Tokenizer.clusterByPattern(transformations);
             String transformation = getFoofahPatternsTransformation(cluster);
             System.out.println(readWritePair);
             System.out.println(transformation);
-            pattern.getTransformations().put(readWritePair, transformation);
+            patternTransformations.put(readWritePair, transformation);
         });
 
-        // Check is the pattern is automatable
-        if (pattern.getTransformations().entrySet().stream().noneMatch(entry ->
-                entry.getValue() == null || entry.getValue().equals("null"))) {
-            pattern.setAutomatable(true);
-        }
+        return patternTransformations;
     }
 
     public String getFoofahPatternsTransformation(HashMap<String, List<Transformation>> tokenizedTransformations) {
@@ -43,7 +41,7 @@ public class Foofah {
             String transformation = getFoofahTransformation(getSeed(1.0 / tokenizedTransformations.get(pattern).size(),
                     tokenizedTransformations.get(pattern)));
 
-            if (transformation == null) return null;
+            if (transformation == null) return "";
 
             groupedPatterns.put(transformation, groupedPatterns.containsKey(transformation) ?
                     Stream.concat(groupedPatterns.get(transformation).stream(), Stream.of(pattern)).collect(Collectors.toList()) :
