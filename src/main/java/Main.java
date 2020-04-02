@@ -29,13 +29,13 @@ public class Main {
         noiseGenerator.addNoise(100);
         noiseGenerator.writeLogFileWithNoise();
 
-        String logFileWithNoise = args[1];
+//        String logFileWithNoise = args[1];
         LogParser logParser = LogParserFactory.getLogParser(logFile);
         List<Event> events = logParser.parseLogFile(logFile);
         StringBuilder spmfInput = SPMFParser.transformActionsToSPMF(events);
 
         // TODO: Delete the sulist in the production version, for now it is used for dev purposes.
-        Map<String, List<Event>> cases = events.subList(0, 300).stream().collect(Collectors.groupingBy(Event::getCaseID));
+        Map<String, List<Event>> cases = events/*.subList(0, 300)*/.stream().collect(Collectors.groupingBy(Event::getCaseID));
 
         // Test converter
 //        Converter converter = new Converter();
@@ -73,12 +73,12 @@ public class Main {
 //        WekaExecutor wekaExecutor = new WekaExecutor();
 //        wekaExecutor.findRulesFromWekaFile(cases, topPatterns.get(1));
 
-        // Find pattern dependencies
+        // Fill pattern info
         PatternService patternService = new PatternService();
         patternService.setTransformations(cases, topPatterns.get(0));
         patternService.setDependencies(cases, topPatterns.get(0));
         patternService.setAutomatability(topPatterns.get(0));
-        System.out.println(topPatterns.get(0).isAutomatable());
+        patternService.setRAI(topPatterns.get(0));
     }
 
     private static void writeInputFile(StringBuilder data) {

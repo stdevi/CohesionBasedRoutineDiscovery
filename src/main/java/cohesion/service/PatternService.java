@@ -1,6 +1,7 @@
 package cohesion.service;
 
 import cohesion.entity.Pattern;
+import cohesion.entity.PatternItem;
 import foofah.FoofahService;
 import log.entity.Event;
 
@@ -28,12 +29,23 @@ public class PatternService {
     }
 
     public void setAutomatability(Pattern pattern) {
-        boolean areTransformationsValid = pattern.getTransformations() == null ||
-                pattern.getTransformations().values().stream().noneMatch(t -> t.equals(""));
+        pattern.getItems().forEach(item -> setItemAutomatability(pattern, item));
+        if (pattern.getItems().stream().allMatch(PatternItem::isAutomatable)) {
+            pattern.setAutomatable(true);
+        }
+    }
 
-        boolean areFunctionalDependenciesValid = pattern.getItemsDependencies().stream().noneMatch(d ->
-                d.getDependerPerDependeeValues().containsValue(null));
+    public void setRAI(Pattern pattern) {
+        double automatableItemsCount = (double) pattern.getItems().stream().filter(PatternItem::isAutomatable).count();
+        double totalItemsCount = pattern.getItems().size();
+        pattern.setRAI(automatableItemsCount / totalItemsCount);
+    }
 
-        pattern.setAutomatable(areTransformationsValid || areFunctionalDependenciesValid);
+    private void setItemAutomatability(Pattern pattern, PatternItem item) {
+        pattern.getTransformations().entrySet().stream()
+                .filter(entry -> entry.getKey().getRight().equals(item) && entry.getValue().isEmpty())
+                .forEach(t -> pattern.getItemsDependencies().stream()
+                        .filter(d -> d.getDepender().equals(item) && d.getDependerPerDependeeValues().containsValue(null))
+                        .forEach(d -> item.setAutomatable(false)));
     }
 }

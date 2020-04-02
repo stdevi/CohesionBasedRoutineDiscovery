@@ -45,7 +45,7 @@ public class CoverageService {
 
     private double countIndividualPatternCoverage(Pattern pattern, List<Sequence> sequences, int totalNumberOfEvents) {
         int patternEventCoverage = sequences.stream().mapToInt(sequence ->
-                sequence.containsPattern(pattern) ? pattern.getLength() : 0).sum();
+                sequence.containsPattern(pattern) ? pattern.getItems().size() : 0).sum();
         return (double) patternEventCoverage / totalNumberOfEvents;
     }
 }

@@ -24,7 +24,7 @@ public class CohesionScorer {
     private int getCohesionPatternScore(Pattern pattern) {
         int medianOutlierCount = getMedianOutlierCount(pattern);
 
-        return pattern.getLength() - medianOutlierCount;
+        return pattern.getItems().size() - medianOutlierCount;
     }
 
     private int getMedianOutlierCount(Pattern pattern) {
