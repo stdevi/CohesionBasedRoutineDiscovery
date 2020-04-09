@@ -1,8 +1,15 @@
-package cohesion.entity;
+package sequence;
+
+import lombok.Data;
+import lombok.ToString;
+import pattern.entity.Pattern;
+import pattern.entity.PatternItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@ToString
 public class Sequence {
     private int id;
     private List<String> items;
@@ -19,30 +26,6 @@ public class Sequence {
 
     public Sequence(List<String> items) {
         this.items = items;
-    }
-
-    public List<String> getItems() {
-        return items;
-    }
-
-    public void setItems(List<String> items) {
-        this.items = items;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Sequence{" +
-                "items=" + items +
-                ", id=" + id +
-                '}';
     }
 
     public boolean contains(Pattern pattern) {

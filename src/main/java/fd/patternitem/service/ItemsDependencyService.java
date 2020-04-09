@@ -1,11 +1,11 @@
-package cohesion.service;
+package fd.patternitem.service;
 
-import cohesion.entity.ItemsDependency;
-import cohesion.entity.Pattern;
-import cohesion.entity.PatternItem;
-import fd.entity.TaneDependency;
-import fd.service.TaneService;
+import fd.patternitem.entity.ItemsDependency;
+import fd.tane.entity.TaneDependency;
+import fd.tane.service.TaneService;
 import log.entity.Event;
+import pattern.entity.Pattern;
+import pattern.entity.PatternItem;
 
 import java.util.*;
 import java.util.stream.Collectors;

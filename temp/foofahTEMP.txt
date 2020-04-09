@@ -1,1 +1,1 @@
-{"InputTable": [["Adam", "Adam", "Nickolson", "Nickolson"]], "OutputTable": [["Adam Nickolson"]]}
+{"InputTable": [["bstones@gmail.com", "bstones@gmail.com"]], "OutputTable": [["bstones@gmail.com"]]}

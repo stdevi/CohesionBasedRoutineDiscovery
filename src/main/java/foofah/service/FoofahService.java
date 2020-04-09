@@ -1,7 +1,8 @@
-package foofah;
+package foofah.service;
 
-import cohesion.entity.Pattern;
-import cohesion.entity.PatternItem;
+import foofah.utils.TransformationsExtractor;
+import pattern.entity.Pattern;
+import pattern.entity.PatternItem;
 import foofah.entity.Transformation;
 import foofah.utils.PythonExecutor;
 import foofah.utils.Tokenizer;

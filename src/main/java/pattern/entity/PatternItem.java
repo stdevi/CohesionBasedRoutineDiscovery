@@ -1,11 +1,9 @@
-package cohesion.entity;
+package pattern.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
-@ToString
 @NoArgsConstructor
 public class PatternItem {
     private int index;
@@ -19,5 +17,10 @@ public class PatternItem {
     public PatternItem(int index, String value) {
         this.index = index;
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

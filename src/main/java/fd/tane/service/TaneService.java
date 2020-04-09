@@ -1,15 +1,14 @@
-package fd.service;
+package fd.tane.service;
 
-import cohesion.entity.Pattern;
-import fd.TaneExecutor;
-import fd.entity.TaneDependency;
+import pattern.entity.Pattern;
+import fd.tane.utils.TaneExecutor;
+import fd.tane.entity.TaneDependency;
 import log.entity.Event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 public class TaneService {
     private List<List<String>> instances;

@@ -1,10 +1,11 @@
 package metrics;
 
-import cohesion.entity.Pattern;
-import cohesion.entity.PatternItem;
-import cohesion.entity.Sequence;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pattern.entity.Pattern;
+import pattern.entity.PatternItem;
+import sequence.Sequence;
+import sequence.service.SequenceService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,10 +18,12 @@ class CoverageServiceTest {
     private List<Sequence> sequences;
     private List<Pattern> patterns;
     private CoverageService coverageService;
+    private SequenceService sequenceService;
 
     @BeforeEach
     void setUp() {
-        coverageService = new CoverageService();
+        sequenceService = new SequenceService();
+        coverageService = new CoverageService(sequenceService);
         sequences = new ArrayList<>();
         patterns = new ArrayList<>();
     }
@@ -40,6 +43,7 @@ class CoverageServiceTest {
         );
         patterns.add(pattern);
 
+        sequenceService.setSequences(sequences);
         coverageService.setPatternsIndividualCoverage(sequences, patterns);
 
         assertEquals(1.0, pattern.getCoverage());
@@ -60,6 +64,7 @@ class CoverageServiceTest {
         );
         patterns.add(pattern);
 
+        sequenceService.setSequences(sequences);
         coverageService.setPatternsIndividualCoverage(sequences, patterns);
 
         assertEquals((double) 8 / 10, pattern.getCoverage());
@@ -86,6 +91,7 @@ class CoverageServiceTest {
         );
         patterns.addAll(Arrays.asList(pattern1, pattern2));
 
+        sequenceService.setSequences(sequences);
         coverageService.setPatternsIndividualCoverage(sequences, patterns);
 
         assertEquals((double) 8 / 12, pattern1.getCoverage());
@@ -108,7 +114,8 @@ class CoverageServiceTest {
         );
         patterns.add(pattern);
 
-        coverageService.setPatternsCumulativeCoverage(sequences, patterns);
+        sequenceService.setSequences(sequences);
+        coverageService.setPatternsCumulativeCoverage(patterns);
 
         assertEquals(1.0, pattern.getCoverage());
     }
@@ -128,7 +135,8 @@ class CoverageServiceTest {
         );
         patterns.add(pattern);
 
-        coverageService.setPatternsCumulativeCoverage(sequences, patterns);
+        sequenceService.setSequences(sequences);
+        coverageService.setPatternsCumulativeCoverage(patterns);
 
         assertEquals((double) 8 / 10, pattern.getCoverage());
     }
@@ -154,7 +162,8 @@ class CoverageServiceTest {
         );
         patterns.addAll(Arrays.asList(pattern1, pattern2));
 
-        coverageService.setPatternsCumulativeCoverage(sequences, patterns);
+        sequenceService.setSequences(sequences);
+        coverageService.setPatternsCumulativeCoverage(patterns);
 
         assertEquals((double) 8 / 12, pattern1.getCoverage());
         assertEquals((double) 4 / 12, pattern2.getCoverage());
@@ -182,7 +191,8 @@ class CoverageServiceTest {
         );
         patterns.addAll(Arrays.asList(pattern1, pattern2));
 
-        coverageService.setPatternsCumulativeCoverage(sequences, patterns);
+        sequenceService.setSequences(sequences);
+        coverageService.setPatternsCumulativeCoverage(patterns);
 
         assertEquals((double) 8 / 16, pattern1.getCoverage());
         assertEquals((double) 4 / 16, pattern2.getCoverage());

@@ -1,6 +1,6 @@
 package weka;
 
-import cohesion.entity.Pattern;
+import pattern.entity.Pattern;
 import log.entity.Event;
 import weka.entity.WekaData;
 

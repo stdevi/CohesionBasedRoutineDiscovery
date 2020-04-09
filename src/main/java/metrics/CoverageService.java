@@ -1,7 +1,8 @@
 package metrics;
 
-import cohesion.entity.Pattern;
-import cohesion.entity.Sequence;
+import pattern.entity.Pattern;
+import sequence.Sequence;
+import sequence.service.SequenceService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,8 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 public class CoverageService {
+    private SequenceService sequenceService;
 
-    public void setPatternsCumulativeCoverage(List<Sequence> sequences, List<Pattern> patterns) {
+    public CoverageService(SequenceService sequenceService) {
+        this.sequenceService = sequenceService;
+    }
+
+    public void setPatternsCumulativeCoverage(List<Pattern> patterns) {
+        List<Sequence> sequences = sequenceService.getSequences();
         Map<Pattern, Double> coveragePerPattern = new HashMap<>();
         List<Sequence> coverageSequences = new ArrayList<>();
         sequences.forEach(sequence -> coverageSequences.add(new Sequence(sequence)));
