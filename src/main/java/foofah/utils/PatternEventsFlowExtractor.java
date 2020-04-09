@@ -1,7 +1,7 @@
-package foofah;
+package foofah.utils;
 
-import cohesion.entity.Pattern;
-import cohesion.entity.PatternItem;
+import pattern.entity.Pattern;
+import pattern.entity.PatternItem;
 
 import java.util.*;
 
@@ -23,7 +23,7 @@ public class PatternEventsFlowExtractor {
 
         for (PatternItem event : pattern.getItems()) {
             String eventType = event.getValue().split("\\+")[0];
-            String eventContext = event.getValue().split("\\+")[1];
+//            String eventContext = event.getValue().split("\\+")[1];
 
             if (readActions.contains(eventType)) {
                 readEvent = event;

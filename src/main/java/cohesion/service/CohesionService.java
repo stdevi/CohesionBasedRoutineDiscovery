@@ -1,34 +1,21 @@
-package cohesion;
+package cohesion.service;
 
-import cohesion.entity.Pattern;
-import cohesion.entity.PatternItem;
-import cohesion.entity.Sequence;
+import pattern.entity.Pattern;
+import sequence.Sequence;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CohesionScorer {
-    private List<Sequence> sequences;
+public class CohesionService {
 
-    public List<Pattern> scorePattern(List<Pattern> patterns, List<Sequence> sequences) {
-        this.sequences = sequences;
+    public int getCohesionScore(Pattern pattern, List<Sequence> sequences) {
+        int medianOutlierCount = getMedianOutlierCount(pattern, sequences);
 
-        patterns = patterns.stream()
-                .peek(pattern -> pattern.setCohesionScore(getCohesionPatternScore(pattern)))
-                .collect(Collectors.toList());
-        patterns.sort(Comparator.comparingInt(Pattern::getCohesionScore).thenComparing(Pattern::getSupport));
-
-        return patterns;
+        return pattern.getItems().size() - medianOutlierCount;
     }
 
-    private int getCohesionPatternScore(Pattern pattern) {
-        int medianOutlierCount = getMedianOutlierCount(pattern);
-
-        return pattern.getLength() - medianOutlierCount;
-    }
-
-    private int getMedianOutlierCount(Pattern pattern) {
-        List<Integer> list = getOutlierLengthList(pattern);
+    private int getMedianOutlierCount(Pattern pattern, List<Sequence> sequences) {
+        List<Integer> list = getOutlierLengthList(pattern, sequences);
         Collections.sort(list);
 
         int median;
@@ -40,7 +27,7 @@ public class CohesionScorer {
         return median;
     }
 
-    private List<Integer> getOutlierLengthList(Pattern pattern) {
+    private List<Integer> getOutlierLengthList(Pattern pattern, List<Sequence> sequences) {
         List<Integer> lengthsList = new ArrayList<>();
         sequences.forEach(sequence -> lengthsList.add(getOutliers(pattern, sequence).size()));
 

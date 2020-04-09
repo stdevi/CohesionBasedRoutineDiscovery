@@ -1,10 +1,7 @@
 package weka;
 
-import cohesion.entity.Pattern;
+import pattern.entity.Pattern;
 import log.entity.Event;
-import utils.PropertyValues;
-import weka.classifiers.rules.JRip;
-import weka.core.Instances;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

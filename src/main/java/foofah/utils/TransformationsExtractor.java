@@ -1,11 +1,11 @@
-package foofah;
+package foofah.utils;
 
-import cohesion.entity.Pattern;
-import cohesion.entity.PatternItem;
 import foofah.entity.Transformation;
 import log.entity.Event;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import pattern.entity.Pattern;
+import pattern.entity.PatternItem;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,12 +13,12 @@ import java.util.stream.Stream;
 
 public class TransformationsExtractor {
     private List<String> readActions;
-    private List<String> bridgeActions;
+    //    private List<String> bridgeActions;
     private List<String> writeActions;
 
     public TransformationsExtractor() {
         writeActions = new ArrayList<>(Collections.singletonList("editField"));
-        bridgeActions = new ArrayList<>(Collections.singletonList("paste"));
+//        bridgeActions = new ArrayList<>(Collections.singletonList("paste"));
         readActions = new ArrayList<>(Collections.singletonList("copyCell"));
     }
 
@@ -74,14 +74,14 @@ public class TransformationsExtractor {
                         Event e = events.get(j);
                         if (/*bridgeActions.contains(events.get(j).getEventType()) &&*/
                                 (e.payload.getOrDefault("target.name", "").equals(target)) ||
-                                (e.payload.getOrDefault("target.id", "").equals(target))) {
+                                        (e.payload.getOrDefault("target.id", "").equals(target))) {
                             for (int k = j; k >= 0; k--) {
                                 if (readActions.contains(events.get(k).getEventType())) {
                                     if (source.toString().equals("")) {
                                         if (events.get(k).payload.containsKey("target.name"))
                                             source = new StringBuilder(events.get(k).getEventType() + "+" + events.get(k).payload.get("target.name"));
                                         else
-                                        source = new StringBuilder(events.get(k).getEventType() + "+" + events.get(k).payload.get("target.id"));
+                                            source = new StringBuilder(events.get(k).getEventType() + "+" + events.get(k).payload.get("target.id"));
                                     } else {
                                         if (events.get(k).payload.containsKey("target.name"))
                                             source.append(",").append(events.get(k).getEventType()).append("+").append(events.get(k).payload.get("target.name"));

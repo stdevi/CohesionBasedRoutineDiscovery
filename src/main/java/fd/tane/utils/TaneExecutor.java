@@ -1,7 +1,7 @@
-package fd;
+package fd.tane.utils;
 
-import cohesion.entity.Pattern;
-import fd.entity.TaneDependency;
+import pattern.entity.Pattern;
+import fd.tane.entity.TaneDependency;
 import log.entity.Event;
 import utils.PropertyValues;
 

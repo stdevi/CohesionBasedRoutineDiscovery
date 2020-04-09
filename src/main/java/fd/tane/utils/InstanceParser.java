@@ -1,8 +1,8 @@
-package fd;
+package fd.tane.utils;
 
-import cohesion.entity.Pattern;
-import cohesion.entity.Sequence;
 import log.entity.Event;
+import pattern.entity.Pattern;
+import sequence.Sequence;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,7 +12,7 @@ public class InstanceParser {
     // Event attributes for instances
     private static final List<String> payloadAttributes = Arrays.asList(/*"url",*/ "target.value", "content");
 
-    private static List<List<String>> instances = new ArrayList<>();
+    private static List<List<String>> instances;
 
     private static Map<String, List<Event>> cases;
     private static Pattern pattern;
@@ -31,6 +31,7 @@ public class InstanceParser {
     }
 
     private static void initInstances() {
+        instances = new ArrayList<>();
         cases.entrySet().stream()
                 .filter(entry -> getSequence(entry.getValue()).contains(pattern))
                 .forEach(entry -> instances.add(new ArrayList<>()));

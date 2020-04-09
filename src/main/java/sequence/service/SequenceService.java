@@ -1,8 +1,11 @@
-package cohesion;
+package sequence.service;
 
-import cohesion.entity.Pattern;
-import cohesion.entity.PatternItem;
-import cohesion.entity.Sequence;
+import log.entity.Event;
+import log.parser.LogParser;
+import log.parser.LogParserFactory;
+import lombok.Data;
+import sequence.Sequence;
+import utils.PropertyValues;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,14 +17,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CohesionParser {
+@Data
+public class SequenceService {
+    private List<Sequence> sequences;
+    private Map<String, List<Event>> cases;
 
-    public List<Sequence> parseFormattedSequences(String fileName) {
-        List<String> sequences = parseRowSequences(fileName);
+    public void parseCases(String logFilePath) {
+        LogParser logParser = LogParserFactory.getLogParser(logFilePath);
+        this.cases = logParser.parseLogFile(logFilePath).stream().collect(Collectors.groupingBy(Event::getCaseID));
+    }
+
+    public void parsedSequences() {
+        List<String> sequences = parseRowSequences(PropertyValues.getProperty("spmfFormattedInputFilePath"));
         sequences = removeSequencesDelimiters(sequences);
         sequences = encodeSequences(sequences);
-
-        return formatSequences(sequences);
+        this.sequences = formatSequences(sequences);
     }
 
     private List<Sequence> formatSequences(List<String> rowSequences) {
@@ -70,41 +80,5 @@ public class CohesionParser {
         ).filter(sequence -> !sequence.startsWith("@")).collect(Collectors.toList());
 
         return sequences;
-    }
-
-    public List<Pattern> parsePatterns(String fileName) {
-        List<Pattern> patterns = new ArrayList<>();
-        List<String> stringPatterns = new ArrayList<>();
-
-        try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            stringPatterns = readItemsets(stream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        patterns = getSplitedItemsets(stringPatterns);
-
-        return patterns;
-    }
-
-    private List<String> readItemsets(Stream<String> stream) {
-        List<String> streamPatterns = new ArrayList<>();
-        stream.forEach(streamPatterns::add);
-
-        return streamPatterns;
-    }
-
-    private List<Pattern> getSplitedItemsets(List<String> stringPatterns) {
-        return stringPatterns.stream().map(patternLine -> {
-            String[] itemsWithSupport = patternLine.split(" -1 ");
-            int support = Integer.parseInt(itemsWithSupport[itemsWithSupport.length - 1].replace("#SUP: ", ""));
-            List<PatternItem> items = new ArrayList<>();
-            int index = 0;
-            for (String itemValue : Arrays.asList(itemsWithSupport).subList(0, itemsWithSupport.length - 1)) {
-                items.add(new PatternItem(index, itemValue));
-                index++;
-            }
-            return new Pattern(items, support);
-        }).collect(Collectors.toList());
     }
 }
