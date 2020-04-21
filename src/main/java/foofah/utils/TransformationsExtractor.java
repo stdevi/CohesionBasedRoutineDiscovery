@@ -17,9 +17,9 @@ public class TransformationsExtractor {
     private List<String> writeActions;
 
     public TransformationsExtractor() {
-        writeActions = new ArrayList<>(Collections.singletonList("editField"));
+        writeActions = new ArrayList<>(Arrays.asList("editField", "editCell"));
 //        bridgeActions = new ArrayList<>(Collections.singletonList("paste"));
-        readActions = new ArrayList<>(Collections.singletonList("copyCell"));
+        readActions = new ArrayList<>(Arrays.asList("copyCell", "copy"));
     }
 
     public Map<Pair<PatternItem, PatternItem>, List<Transformation>> getPatternTransformations(Map<String, List<Event>> cases, Pattern pattern) {
@@ -29,12 +29,17 @@ public class TransformationsExtractor {
         List<Transformation> examples = extractAllTransformations(cases);
 
         writesPerReadEvents.forEach((key, value) -> value.forEach(writeEvent -> {
-            List<Transformation> transformations = examples.stream()
-                    .filter(e -> e.getSource().contains(key.getValue()) && e.getTarget().contains(writeEvent.getValue()))
-                    .collect(Collectors.toList());
-            if (!transformations.isEmpty()) {
-                Pair<PatternItem, PatternItem> readWrite = new ImmutablePair<>(key, writeEvent);
-                transformationsPerReadWrite.putIfAbsent(readWrite, transformations);
+            if (key != null) {
+                List<Transformation> transformations = examples.stream()
+                        .filter(e -> e.getSource().contains(key.getValue()) && e.getTarget().contains(writeEvent.getValue()))
+                        .collect(Collectors.toList());
+                if (!transformations.isEmpty()) {
+                    Pair<PatternItem, PatternItem> readWrite = new ImmutablePair<>(key, writeEvent);
+                    transformationsPerReadWrite.putIfAbsent(readWrite, transformations);
+                }
+            } else {
+                Pair<PatternItem, PatternItem> readWrite = new ImmutablePair<>(new PatternItem(""), writeEvent);
+                transformationsPerReadWrite.putIfAbsent(readWrite, new ArrayList<>());
             }
         }));
 
@@ -70,11 +75,11 @@ public class TransformationsExtractor {
                     List<String> input = new ArrayList<>();
                     targets.add(target);
 
-                    for (int j = 0; j <= i; j++) {
+                    for (int j = 0; j < i; j++) {
                         Event e = events.get(j);
                         if (/*bridgeActions.contains(events.get(j).getEventType()) &&*/
                                 (e.payload.getOrDefault("target.name", "").equals(target)) ||
-                                        (e.payload.getOrDefault("target.id", "").equals(target))) {
+                                        (e.payload.getOrDefault("target.id", "").equals(target)) || i == j + 1) {
                             for (int k = j; k >= 0; k--) {
                                 if (readActions.contains(events.get(k).getEventType())) {
                                     if (source.toString().equals("")) {

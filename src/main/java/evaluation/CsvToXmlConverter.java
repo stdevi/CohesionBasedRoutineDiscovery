@@ -1,8 +1,10 @@
 package evaluation;
 
 import log.entity.Event;
+import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import sequence.service.SequenceService;
 import utils.PropertyValues;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -18,13 +20,22 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public class Converter {
+public class CsvToXmlConverter {
     private Document doc;
     private Element process;
 
+    @Getter
+    private SequenceService sequenceService;
+
+    public CsvToXmlConverter() {
+        sequenceService = new SequenceService();
+    }
+
     public static void main(String[] args) {
-//        converter.parseCases(cases);
-//        converter.print();
+        CsvToXmlConverter csvToXmlConverter = new CsvToXmlConverter();
+        csvToXmlConverter.getSequenceService().parseCases(args[0]);
+        csvToXmlConverter.parseCases(csvToXmlConverter.getSequenceService().getCases());
+        csvToXmlConverter.print();
     }
 
     public void print() {

@@ -37,8 +37,6 @@ public class XMLLogParser implements LogParser {
             e.printStackTrace();
         }
 
-        setEventsContext(events);
-
         return events;
     }
 
@@ -75,23 +73,5 @@ public class XMLLogParser implements LogParser {
         } else if ("time:timestamp".equals(attributeName)) {
             event.setTimestamp(attributeTextContent);
         }
-    }
-
-    private void setEventsContext(List<Event> events) {
-        HashMap<String, List<Event>> groupedEvents = EventUtils.groupByEventType(events);
-        for (String group : groupedEvents.keySet())
-            groupedEvents.get(group).forEach(event -> {
-                HashMap<String, String> context = new HashMap<>();
-                for (String attribute : event.payload.keySet()) {
-                    switch (attribute) {
-                        case "Column":
-                        case "Row":
-                        case "Label":
-                            context.put(attribute, event.payload.get(attribute));
-                            break;
-                    }
-                }
-                event.setContext(context);
-            });
     }
 }

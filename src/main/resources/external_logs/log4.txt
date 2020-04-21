@@ -1,0 +1,4 @@
+openFile goToUrl
+clickButton waitResponse
+clickButton editField
+paste editField copy paste editField clickButton

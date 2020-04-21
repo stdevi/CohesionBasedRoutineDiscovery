@@ -1,0 +1,4 @@
+openFile goToUrl editField editField clickButton
+copyCell+B2 paste editField clickButton
+copy+ paste editField clickButton
+clickButton clickButton editField copy paste editField

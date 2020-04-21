@@ -53,9 +53,15 @@ public abstract class Event {
 
     public String getEventNameAndContext() {
         if (getContext().size() > 0) {
-            return getEventType() + "+" + getContext().values().toArray()[0];
+            if (getContext().containsKey("target.name")) {
+                return getEventType() + "+" + getContext().get("target.name");
+            } else if (getContext().containsKey("target.id")) {
+                return getEventType() + "+" + getContext().get("target.id");
+            } else {
+                return getEventType() + "+" + getContext().values().toArray()[0];
+            }
         } else {
-            return getEventType();
+            return getEventType() + "+";
         }
     }
 

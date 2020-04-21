@@ -1,0 +1,5 @@
+clickButton+Clients
+pressKey clickButton
+clickButton+Confirm
+openFile copy paste saveFile
+clickButton+UnbindFile clickButton
