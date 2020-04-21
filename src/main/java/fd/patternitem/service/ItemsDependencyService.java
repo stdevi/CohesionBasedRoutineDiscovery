@@ -29,6 +29,10 @@ public class ItemsDependencyService {
             List<Integer> dependeeIndices = taneService.getDependeeByDepender(functionalDependencies, dependerIdx);
             List<PatternItem> dependee = dependeeIndices.contains(-1) ? null : dependeeIndices.stream()
                     .map(idx -> pattern.getItems().get(idx)).collect(Collectors.toList());
+            if (dependee != null && dependee.stream().anyMatch(d -> d.getIndex() > dependerIdx)) {
+                dependee.clear();
+                dependeeValuesPerDepender.forEach((k, v) -> v.forEach(List::clear));
+            }
             itemsDependencies.add(getItemsDependency(pair.getRight(), dependee, dependeeValuesPerDepender));
         });
 

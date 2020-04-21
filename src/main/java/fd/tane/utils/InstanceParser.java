@@ -2,6 +2,7 @@ package fd.tane.utils;
 
 import log.entity.Event;
 import pattern.entity.Pattern;
+import pattern.entity.PatternItem;
 import sequence.Sequence;
 
 import java.util.*;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 public class InstanceParser {
 
     // Event attributes for instances
-    private static final List<String> payloadAttributes = Arrays.asList(/*"url",*/ "target.value", "content");
+    private static final List<String> payloadAttributes = Arrays.asList("target.value", "content", "target.id", "url");
 
     private static List<List<String>> instances;
 
@@ -25,7 +26,7 @@ public class InstanceParser {
         initInstances();
         // Find instances
         Map<String, Integer> patternItemsCounts = new HashMap<>();
-        pattern.getItemsValues().forEach(patternItem -> extractData(patternItemsCounts, patternItem));
+        pattern.getItems().forEach(patternItem -> extractData(patternItemsCounts, patternItem));
 
         return instances;
     }
@@ -33,36 +34,37 @@ public class InstanceParser {
     private static void initInstances() {
         instances = new ArrayList<>();
         cases.entrySet().stream()
-                .filter(entry -> getSequence(entry.getValue()).contains(pattern))
+                .filter(entry -> {
+                    Sequence s = getSequence(entry.getValue());
+                    return s.contains(pattern);
+                })
                 .forEach(entry -> instances.add(new ArrayList<>()));
     }
 
-    private static void extractData(Map<String, Integer> patternItemsCounts, String patternItem) {
-        countPatternItems(patternItemsCounts, patternItem);
+    private static void extractData(Map<String, Integer> patternItemsCounts, PatternItem patternItem) {
+        countPatternItems(patternItemsCounts, patternItem.getValue());
         int sequenceIndex = -1;
         for (List<Event> caseEvents : cases.values()) {
             Sequence sequence = getSequence(caseEvents);
             if (sequence.contains(pattern)) {
                 sequenceIndex++;
                 // Find events in the sequence that matches the current pattern item
-                List<Event> matchCaseEvents = getEvents(patternItem, caseEvents);
+                List<Event> matchCaseEvents = getEvents(patternItem.getValue(), caseEvents);
                 // Among defined payload attributes find that are present and add them to the valuesPerAttribute map
                 for (String payloadAttribute : payloadAttributes) {
-                    int patternItemIndex = patternItemsCounts.get(patternItem);
+                    int patternItemIndex = patternItemsCounts.get(patternItem.getValue());
                     Map<String, String> payload = matchCaseEvents.get(patternItemIndex).getPayload();
-
-                    if (payloadAttribute.equals(payloadAttributes.get(1)) && payload.containsKey(payloadAttributes.get(0))) {
-                        continue;
-                    }
 
                     // Check if event payload contains predefined payload attribute
                     if (payload.containsKey(payloadAttribute)) {
-                        String attributeName = patternItem + "." + patternItemIndex + "." + payloadAttribute;
                         String attributeValue = payload.get(payloadAttribute);
                         // Fill attributes map and instances list
-                        instances.get(sequenceIndex).add(attributeValue.replaceAll(" |,| ,", "|"));
+                        instances.get(sequenceIndex).add(attributeValue);
+                        break;
                     }
                 }
+                if (instances.get(sequenceIndex).isEmpty() || instances.get(sequenceIndex).size() < patternItem.getIndex() + 1)
+                    instances.get(sequenceIndex).add("");
             }
         }
     }

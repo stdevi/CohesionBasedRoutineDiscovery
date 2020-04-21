@@ -1,0 +1,5 @@
+clickButton+B
+goToUrl clickButton+B
+openFile
+copyCell+
+goToUrl+www.webpage2.com

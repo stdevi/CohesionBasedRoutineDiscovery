@@ -1,0 +1,3 @@
+paste editField copyCell paste
+copyCell paste editField copyCell paste editField copyCell paste editField copyCell paste editField
+clickCheckbox editField clickButton

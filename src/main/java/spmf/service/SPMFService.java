@@ -59,7 +59,16 @@ public class SPMFService {
 
     private void assembleEvent(StringBuilder result, Event event) {
         result.append(event.getEventType());
-        String context = event.getContext().values().isEmpty() ? "" : String.valueOf(event.getContext().values().toArray()[0]);
+        String context = "";
+        if (!event.getContext().values().isEmpty()) {
+            if (event.getContext().containsKey("target.name")) {
+                context = event.getContext().get("target.name");
+            } else if (event.getContext().containsKey("target.id")) {
+                context = event.getContext().get("target.id");
+            } else {
+                context = String.valueOf(event.getContext().values().toArray()[0]);
+            }
+        }
         result.append("+").append(context).append(" -1 ");
     }
 

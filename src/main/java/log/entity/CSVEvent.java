@@ -21,7 +21,8 @@ public class CSVEvent extends Event {
             if (i != attributes.indexOf("eventType") && i != attributes.indexOf("timeStamp") && i != attributes.indexOf("caseID")
                     && ((!temp.equals("\"\"") && !temp.equals("")) || (i == attributes.indexOf("target.value")
                     && (this.eventType.equals("clickTextField") || this.eventType.equals("editField") ||
-                    this.eventType.equals("getCell") || this.eventType.equals("editRange"))))) {
+                    this.eventType.equals("editCell") || this.eventType.equals("getCell") ||
+                    this.eventType.equals("editRange"))))) {
                 payload.put(attributes.get(i), temp);
             }
         }
@@ -32,5 +33,12 @@ public class CSVEvent extends Event {
                 payload.put("target.column", payload.get("target.id").replaceAll("\\d+", ""));
             }
         }
+    }
+
+    public static String[] getColumns() {
+        return new String[]{"caseID", "timeStamp", "userID", "targetApp", "eventType", "url", "content",
+                "target.workbookName", "target.sheetName", "target.id", "target.class", "target.tagName",
+                "target.type", "target.name", "target.value", "target.innerText", "target.checked", "target.href",
+                "target.option", "target.title", "target.innerHTML"};
     }
 }

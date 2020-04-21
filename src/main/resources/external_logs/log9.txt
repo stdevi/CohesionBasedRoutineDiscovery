@@ -1,0 +1,5 @@
+clickCheckbox editField clickButton
+paste editField copyCell paste
+copyCell paste editField copyCell paste
+copyCell paste editField
+paste editField

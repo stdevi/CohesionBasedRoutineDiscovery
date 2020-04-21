@@ -66,8 +66,8 @@ public class WekaParser {
                         String attributeValue = payload.get(payloadAttribute);
                         // Fill attributes map and instances list
                         valuesPerAttribute.putIfAbsent(attributeName, new LinkedHashSet<>());
-                        valuesPerAttribute.get(attributeName).add(attributeValue.replaceAll(" |,| ,", "|"));
-                        instances.get(sequenceIndex).add(attributeValue.replaceAll(" |,| ,", "|"));
+                        valuesPerAttribute.get(attributeName).add(attributeValue/*.replaceAll(" |,| ,", "|")*/);
+                        instances.get(sequenceIndex).add(attributeValue/*.replaceAll(" |,| ,", "|")*/);
                     }
                 }
             }

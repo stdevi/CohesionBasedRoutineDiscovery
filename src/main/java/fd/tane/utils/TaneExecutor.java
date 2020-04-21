@@ -1,8 +1,8 @@
 package fd.tane.utils;
 
-import pattern.entity.Pattern;
 import fd.tane.entity.TaneDependency;
 import log.entity.Event;
+import pattern.entity.Pattern;
 import utils.PropertyValues;
 
 import java.io.File;
@@ -63,9 +63,17 @@ public class TaneExecutor {
                 "/functional_dependencies.txt"))) {
             stream.filter(line -> line.contains("->") && !line.contains("key")).forEach(line -> {
                 String[] dependency = line.split("->");
-                int dependee = dependency[0].isEmpty() ? -1 : Integer.parseInt(dependency[0].trim()) - 1;
-                int depender = dependency[1].isEmpty() ? -1 : Integer.parseInt(dependency[1].trim()) - 1;
-                functionalDependencies.add(new TaneDependency(dependee, depender));
+                if (dependency[0].split(" ").length > 1) {
+                    for (String s : dependency[0].split(" ")) {
+                        int dependee = s.isEmpty() ? -1 : Integer.parseInt(s.trim()) - 1;
+                        int depender = dependency[1].isEmpty() ? -1 : Integer.parseInt(dependency[1].trim()) - 1;
+                        functionalDependencies.add(new TaneDependency(dependee, depender));
+                    }
+                } else {
+                    int dependee = dependency[0].isEmpty() ? -1 : Integer.parseInt(dependency[0].trim()) - 1;
+                    int depender = dependency[1].isEmpty() ? -1 : Integer.parseInt(dependency[1].trim()) - 1;
+                    functionalDependencies.add(new TaneDependency(dependee, depender));
+                }
             });
         } catch (IOException e) {
             e.printStackTrace();

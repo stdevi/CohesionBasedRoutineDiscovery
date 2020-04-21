@@ -1,3 +1,4 @@
+import evaluation.MetricService;
 import metrics.CoverageService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,7 @@ public class Runner {
     private SequenceService sequenceService;
     private PatternService patternService;
     private CoverageService coverageService;
+    private MetricService metricService;
 
     public void run(String logFilePath) {
         initServices();
@@ -43,7 +45,7 @@ public class Runner {
         LOGGER.debug("Patterns sorted by cohesion score:");
         patternService.getSortedPatternsByCohesionScore().forEach(System.out::println);
 
-        List<Pattern> cutOffPatterns = patternService.getCutOffPatterns(20);
+        List<Pattern> cutOffPatterns = patternService.getCutOffPatterns(10);
 
         LOGGER.debug("Top patterns (cut-off = 20%):");
         cutOffPatterns.forEach(System.out::println);
@@ -68,6 +70,15 @@ public class Runner {
         cutOffPatterns.forEach(patternService::setRAI);
         LOGGER.info("Complete setting cut-off patterns RAI.");
 
+        LOGGER.debug("Cut-off patterns metrics:");
+        metricService.printPatternsMetrics(cutOffPatterns);
+
+        String externalPatternsFile = "src/main/resources/external_logs/log10.txt";
+        LOGGER.debug("Total coverage of the external patterns:");
+        System.out.println(metricService.getExternalPatternsCoverage(externalPatternsFile));
+        LOGGER.debug("External patterns metrics:");
+        metricService.printExternalPatternsMetrics(externalPatternsFile);
+
         LOGGER.debug("Assembled cut-off patterns: ");
         cutOffPatterns.forEach(System.out::println);
     }
@@ -77,5 +88,6 @@ public class Runner {
         spmfService = new SPMFService(sequenceService);
         patternService = new PatternService(sequenceService);
         coverageService = new CoverageService(sequenceService);
+        metricService = new MetricService(sequenceService);
     }
 }
