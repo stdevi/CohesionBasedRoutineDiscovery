@@ -24,7 +24,8 @@ public class EventUtils {
         attributes.stream().filter(attribute -> !attribute.equals("timeStamp") && !attribute.equals("eventType")).forEach(attribute -> {
             List<String> uniqueValues = events.stream().map(el -> el.payload.get(attribute)).distinct().collect(Collectors.toList());
             double variance = (double) (uniqueValues.size() - 1) / events.size();
-            if ((attribute.equals("target.innerText") || attribute.equals("target.name") || variance > 0.0) && variance < threshold) {
+            if ((attribute.equals("target.innerText") || attribute.equals("target.name")|| variance > 0.0) &&
+                    variance < threshold && !attribute.equals("target.value") && !attribute.equals("content")) {
                 if (!considerMissingValues) {
                     if (uniqueValues.size() - 1 > 1 || attribute.equals("target.innerText") || attribute.equals("target.name")) {
                         context.add(attribute);

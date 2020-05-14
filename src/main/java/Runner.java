@@ -9,6 +9,7 @@ import spmf.service.SPMFAlgorithmName;
 import spmf.service.SPMFService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Runner {
     private static final Logger LOGGER = LogManager.getLogger(Runner.class);
@@ -27,7 +28,7 @@ public class Runner {
         LOGGER.info("Complete parsing log.");
 
         LOGGER.info("Running SPMF...");
-        spmfService.runSPMFAlgorithm(SPMFAlgorithmName.BIDE, 10);
+        spmfService.runSPMFAlgorithm(SPMFAlgorithmName.CloFast, 10);
         LOGGER.info("Complete SPMF processing.");
 
         LOGGER.info("Parsing sequences from SPMF input...");
@@ -42,16 +43,11 @@ public class Runner {
         patternService.getPatterns().forEach(patternService::setCohesionScore);
         LOGGER.info("Complete setting patterns cohesion score.");
 
-        LOGGER.debug("Patterns sorted by cohesion score:");
-        patternService.getSortedPatternsByCohesionScore().forEach(System.out::println);
-
-        List<Pattern> cutOffPatterns = patternService.getCutOffPatterns(10);
-
-        LOGGER.debug("Top patterns (cut-off = 20%):");
-        cutOffPatterns.forEach(System.out::println);
+        List<Pattern> cutOffPatterns = patternService.getCutOffPatterns(20);
 
         LOGGER.info("Setting cut-off patterns coverages...");
         coverageService.setPatternsCumulativeCoverage(cutOffPatterns);
+        cutOffPatterns = cutOffPatterns.stream().filter(p -> p.getCoverage() > 0).collect(Collectors.toList());
         LOGGER.info("Complete setting cut-off patterns coverages.");
 
         LOGGER.info("Setting cut-off patterns transformations...");
@@ -71,13 +67,11 @@ public class Runner {
         LOGGER.info("Complete setting cut-off patterns RAI.");
 
         LOGGER.debug("Cut-off patterns metrics:");
+        System.out.println("Supports: " + cutOffPatterns.stream().mapToDouble(Pattern::getSupport).mapToObj(String::valueOf).collect(Collectors.joining(", ", "", "")));
+        System.out.println("Lengths: " + cutOffPatterns.stream().mapToDouble(p -> p.getItems().size()).mapToObj(String::valueOf).collect(Collectors.joining(", ", "", "")));
+        System.out.println("RAIs: " + cutOffPatterns.stream().mapToDouble(Pattern::getRAI).mapToObj(String::valueOf).collect(Collectors.joining(", ", "", "")));
+        System.out.println("Total coverage: " + cutOffPatterns.stream().mapToDouble(Pattern::getCoverage).sum());
         metricService.printPatternsMetrics(cutOffPatterns);
-
-        String externalPatternsFile = "src/main/resources/external_logs/log10.txt";
-        LOGGER.debug("Total coverage of the external patterns:");
-        System.out.println(metricService.getExternalPatternsCoverage(externalPatternsFile));
-        LOGGER.debug("External patterns metrics:");
-        metricService.printExternalPatternsMetrics(externalPatternsFile);
 
         LOGGER.debug("Assembled cut-off patterns: ");
         cutOffPatterns.forEach(System.out::println);

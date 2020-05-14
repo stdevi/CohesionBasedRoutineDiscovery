@@ -25,7 +25,7 @@ public class TransformationsExtractor {
     public Map<Pair<PatternItem, PatternItem>, List<Transformation>> getPatternTransformations(Map<String, List<Event>> cases, Pattern pattern) {
         PatternEventsFlowExtractor extractor = new PatternEventsFlowExtractor();
         Map<PatternItem, List<PatternItem>> writesPerReadEvents = extractor.extractWriteEventsPerReadEvent(pattern);
-        Map<Pair<PatternItem, PatternItem>, List<Transformation>> transformationsPerReadWrite = new HashMap<>();
+        Map<Pair<PatternItem, PatternItem>, List<Transformation>> transformationsPerReadWrite = new LinkedHashMap<>();
         List<Transformation> examples = extractAllTransformations(cases);
 
         writesPerReadEvents.forEach((key, value) -> value.forEach(writeEvent -> {
@@ -67,7 +67,7 @@ public class TransformationsExtractor {
             List<String> targets = new ArrayList<>();
 
             for (int i = events.size() - 1; i >= 0; i--) {
-                if (writeActions.contains(events.get(i).getEventType()) && !targets.contains(events.get(i).payload.get("target.name"))) {
+                if (writeActions.contains(events.get(i).getEventType()) /*&& !targets.contains(events.get(i).payload.get("target.name"))*/) {
                     String target = events.get(i).payload.containsKey("target.name") ? events.get(i).payload.get("target.name") : events.get(i).payload.get("target.id");
                     String output = events.get(i).payload.get("target.value").replaceAll("\\P{Print}", " ");
 
@@ -77,9 +77,9 @@ public class TransformationsExtractor {
 
                     for (int j = 0; j < i; j++) {
                         Event e = events.get(j);
-                        if (/*bridgeActions.contains(events.get(j).getEventType()) &&*/
+                        if (events.get(j).getEventType().contains("paste") &&
                                 (e.payload.getOrDefault("target.name", "").equals(target)) ||
-                                        (e.payload.getOrDefault("target.id", "").equals(target)) || i == j + 1) {
+                                (e.payload.getOrDefault("target.id", "").equals(target)) || i == j + 1) {
                             for (int k = j; k >= 0; k--) {
                                 if (readActions.contains(events.get(k).getEventType())) {
                                     if (source.toString().equals("")) {
@@ -89,9 +89,11 @@ public class TransformationsExtractor {
                                             source = new StringBuilder(events.get(k).getEventType() + "+" + events.get(k).payload.get("target.id"));
                                     } else {
                                         if (events.get(k).payload.containsKey("target.name"))
-                                            source.append(",").append(events.get(k).getEventType()).append("+").append(events.get(k).payload.get("target.name"));
+                                            source = new StringBuilder(events.get(k).getEventType() + "+" + events.get(k).payload.get("target.name"));
+//                                        source.append(",").append(events.get(k).getEventType()).append("+").append(events.get(k).payload.get("target.name"));
                                         else
-                                            source.append(",").append(events.get(k).getEventType()).append("+").append(events.get(k).payload.get("target.id"));
+                                            source = new StringBuilder(events.get(k).getEventType() + "+" + events.get(k).payload.get("target.id"));
+//                                            source.append(",").append(events.get(k).getEventType()).append("+").append(events.get(k).payload.get("target.id"));
 
                                     }
                                     input.add(events.get(k).payload.get("target.value").replaceAll("\\P{Print}", " "));

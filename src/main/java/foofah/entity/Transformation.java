@@ -10,6 +10,14 @@ public class Transformation {
     private List<String> input;
     private List<String> output;
 
+    public Transformation(Transformation transformation) {
+        this.caseID = transformation.getCaseID();
+        this.source = transformation.getSource();
+        this.target = transformation.getTarget();
+        this.input = transformation.getInput();
+        this.output = transformation.getOutput();
+    }
+
     public Transformation(String caseID, String source, String target, List<String> input, List<String> output) {
         this.caseID = caseID;
         this.source = source;
@@ -41,6 +49,10 @@ public class Transformation {
 
     public String getSource() {
         return this.source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public List<String> getInput() {

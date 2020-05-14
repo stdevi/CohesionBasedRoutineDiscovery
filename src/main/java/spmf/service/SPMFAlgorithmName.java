@@ -2,7 +2,7 @@ package spmf.service;
 
 public enum SPMFAlgorithmName {
     PrefixSpan("PrefixSpan"),
-    CloSpan("CloSpan"),
+    CloFast("CloFast"),
     BIDE("BIDE+");
 
     public final String value;

@@ -27,6 +27,8 @@ public class MetricService {
         List<List<String>> uniqueSequences = sequenceService.getSequences().stream()
                 .map(Sequence::getItems).distinct().collect(Collectors.toList());
 
+        List<Double> fscores = new ArrayList<>();
+
         int TP = 0;
         int FN = 0;
 
@@ -44,9 +46,12 @@ public class MetricService {
             System.out.println("| TP: " + TP);
             System.out.println("| FN: " + FN);
             System.out.println();
+            fscores.add(((double) (2 * TP) / (2*TP + FN)));
             TP = 0;
             FN = 0;
         }
+
+        System.out.println("AVG F-score: " + fscores.stream().mapToDouble(t -> t).average());
     }
 
     public void printExternalPatternsMetrics(String path) {

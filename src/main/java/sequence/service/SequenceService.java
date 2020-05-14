@@ -10,10 +10,7 @@ import utils.PropertyValues;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,7 +21,8 @@ public class SequenceService {
 
     public void parseCases(String logFilePath) {
         LogParser logParser = LogParserFactory.getLogParser(logFilePath);
-        this.cases = logParser.parseLogFile(logFilePath).stream().collect(Collectors.groupingBy(Event::getCaseID));
+        this.cases = new LinkedHashMap<>(logParser.parseLogFile(logFilePath).stream()
+                .collect(Collectors.groupingBy(Event::getCaseID)));
     }
 
     public void parsedSequences() {

@@ -108,7 +108,7 @@ public class PatternService {
     private List<Pattern> getSplittedItemsets(List<String> stringPatterns) {
         return stringPatterns.stream().map(patternLine -> {
             String[] itemsWithSupport = patternLine.split(" -1 ");
-            int support = Integer.parseInt(itemsWithSupport[itemsWithSupport.length - 1].replace("#SUP: ", ""));
+            int support = Integer.parseInt(itemsWithSupport[itemsWithSupport.length - 1].replace("-2 #SUP: ", ""));
             List<PatternItem> items = new ArrayList<>();
             int index = 0;
             for (String itemValue : Arrays.asList(itemsWithSupport).subList(0, itemsWithSupport.length - 1)) {
