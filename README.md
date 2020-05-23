@@ -16,14 +16,20 @@ The approach requires [Foofah](https://github.com/umich-dbgroup/foofah) and [Tan
 
 ## Results Reproduction
 Get project repository:  
-`$ git clone https://github.com/stdevi/CohesionBasedRoutineDiscovery.git`  
+```bash
+$ git clone https://github.com/stdevi/CohesionBasedRoutineDiscovery.git
+```  
 Navigate to the project folder:  
-`$ cd CohesionBasedRoutineDiscovery`  
+```bash
+$ cd CohesionBasedRoutineDiscovery
+```  
 Run the maven command:  
-`$ mvn exec:java -Dexec.mainClass=Main -Dexec.args="path-to-log path-to-foofah path-to-tane"`  
+```bash
+$ mvn exec:java -Dexec.mainClass=Main -Dexec.args="path-to-log path-to-foofah path-to-tane"`
+```  
 where `path-to-log` is the specified path to the dataset, `path-to-foofah` is the specified path to the Foofah project, and `path-to-tane` is the specified path to the Tane project.  
 
-For example, if we place Foofah and Tane projects to the project folder:
+For example, if we place Foofah and Tane projects in the project folder:
 ```bash
 . 
 │── CohesionBasedRoutineDiscovery
@@ -35,7 +41,7 @@ For example, if we place Foofah and Tane projects to the project folder:
     ├── README.md
     └── pom.xml
 ```
-The command is:
+the command to run a solution will be as follows:
 ```bash
 $ mvn exec:java -Dexec.mainClass=Main -Dexec.args="C:\Users\stdevi\logs\Log10.csv foofah tane-1.0"
 ```
