@@ -1,9 +1,9 @@
 package fd.tane.service;
 
-import pattern.entity.Pattern;
-import fd.tane.utils.TaneExecutor;
 import fd.tane.entity.TaneDependency;
+import fd.tane.utils.TaneExecutor;
 import log.entity.Event;
+import pattern.entity.Pattern;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 public class TaneService {
+    private static final TaneService INSTANCE = new TaneService();
     private List<List<String>> instances;
+
+    private TaneService() {
+
+    }
+
+    public static TaneService getInstance() {
+        return INSTANCE;
+    }
 
     public List<TaneDependency> getFunctionalDependencies(Map<String, List<Event>> cases, Pattern pattern) {
         TaneExecutor taneExecutor = new TaneExecutor(cases, pattern);

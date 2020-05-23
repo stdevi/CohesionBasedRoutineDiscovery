@@ -1,2 +1,0 @@
-goToUrl clickButton+open
-clickButton+OK

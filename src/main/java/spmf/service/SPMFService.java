@@ -3,21 +3,31 @@ package spmf.service;
 import log.entity.Event;
 import sequence.service.SequenceService;
 import spmf.utils.SPMFFormatter;
-import utils.PropertyValues;
-import utils.Writer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class SPMFService {
-    private SequenceService sequenceService;
+    private static final SPMFService INSTANCE = new SPMFService();
 
-    public SPMFService(SequenceService sequenceService) {
-        this.sequenceService = sequenceService;
+    private File inputSPMFFile;
+    private File outputSPMFFile;
+
+    private SPMFService() {
+        try {
+            inputSPMFFile = File.createTempFile("spmf-input", null);
+            inputSPMFFile.deleteOnExit();
+            outputSPMFFile = File.createTempFile("spmf-output", null);
+            outputSPMFFile.deleteOnExit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static SPMFService getInstance() {
+        return INSTANCE;
     }
 
     public void runSPMFAlgorithm(SPMFAlgorithmName algorithmName, int minSupport) {
@@ -43,11 +53,16 @@ public class SPMFService {
     private void writeSPMFInputFile() {
         StringBuilder data = transformActionsToSPMF();
         StringBuilder spmfFormattedInput = SPMFFormatter.formatData(data);
-        Writer.writeFile(spmfFormattedInput, PropertyValues.getProperty("spmfFormattedInputFilePath"));
+
+        try (FileWriter fileWriter = new FileWriter(inputSPMFFile)) {
+            fileWriter.write(spmfFormattedInput.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private StringBuilder transformActionsToSPMF() {
-        Map<String, List<Event>> sequencePerCaseId = sequenceService.getCases();
+        Map<String, List<Event>> sequencePerCaseId = SequenceService.getInstance().getCases();
         StringBuilder spmfSequences = new StringBuilder();
         sequencePerCaseId.forEach((caseId, sequence) -> {
             sequence.forEach(event -> assembleEvent(spmfSequences, event));
@@ -81,10 +96,18 @@ public class SPMFService {
         cmdList.add("spmf.jar");
         cmdList.add("run");
         cmdList.add(algorithmName.value);
-        cmdList.add(PropertyValues.getProperty("spmfFormattedInputFilePath"));
-        cmdList.add(PropertyValues.getProperty("spmfOutputFilePath"));
+        cmdList.add(inputSPMFFile.getAbsolutePath());
+        cmdList.add(outputSPMFFile.getAbsolutePath());
         cmdList.add(minSupport + "%");
 
         return cmdList;
+    }
+
+    public File getInputSPMFFile() {
+        return inputSPMFFile;
+    }
+
+    public File getOutputSPMFFile() {
+        return outputSPMFFile;
     }
 }

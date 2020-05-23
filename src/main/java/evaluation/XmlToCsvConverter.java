@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Map;
 
 public class XmlToCsvConverter {
-    private static SequenceService sequenceService = new SequenceService();
+    private static SequenceService sequenceService;
 
     public static void main(String[] args) {
         String xmlFilePath = args[0];
         String csvFilePath = args[1];
 
+        sequenceService = SequenceService.getInstance();
         sequenceService.parseCases(xmlFilePath);
         createCSVFile(csvFilePath);
     }

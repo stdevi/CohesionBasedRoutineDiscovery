@@ -5,7 +5,7 @@ import log.parser.LogParser;
 import log.parser.LogParserFactory;
 import lombok.Data;
 import sequence.Sequence;
-import utils.PropertyValues;
+import spmf.service.SPMFService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,8 +16,17 @@ import java.util.stream.Stream;
 
 @Data
 public class SequenceService {
+    private static final SequenceService INSTANCE = new SequenceService();
+
     private List<Sequence> sequences;
     private Map<String, List<Event>> cases;
+
+    private SequenceService() {
+    }
+
+    public static SequenceService getInstance() {
+        return INSTANCE;
+    }
 
     public void parseCases(String logFilePath) {
         LogParser logParser = LogParserFactory.getLogParser(logFilePath);
@@ -25,8 +34,9 @@ public class SequenceService {
                 .collect(Collectors.groupingBy(Event::getCaseID)));
     }
 
-    public void parsedSequences() {
-        List<String> sequences = parseRowSequences(PropertyValues.getProperty("spmfFormattedInputFilePath"));
+    public void parseSequences() {
+        String path = SPMFService.getInstance().getInputSPMFFile().getAbsolutePath();
+        List<String> sequences = parseRowSequences(path);
         sequences = removeSequencesDelimiters(sequences);
         sequences = encodeSequences(sequences);
         this.sequences = formatSequences(sequences);
@@ -52,10 +62,10 @@ public class SequenceService {
                 .collect(Collectors.toList());
     }
 
-    private List<String> parseRowSequences(String fileName) {
+    private List<String> parseRowSequences(String filePath) {
         List<String> sequences = new ArrayList<>();
 
-        try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
+        try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
             stream.forEach(sequences::add);
         } catch (IOException e) {
             e.printStackTrace();

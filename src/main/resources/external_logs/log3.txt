@@ -1,6 +1,0 @@
-openFile goToUrl editField editField clickButton
-clickButton
-waitResponse goToUrl editField editField clickButton
-waitResponse+www.webpage.com/error goToUrl editField editField clickButton
-editField+B editField+C
-clickButton editField copy paste editField copy paste editField

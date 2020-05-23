@@ -1,14 +1,13 @@
 package foofah.service;
 
-import foofah.utils.TransformationsExtractor;
-import pattern.entity.Pattern;
-import pattern.entity.PatternItem;
 import foofah.entity.Transformation;
-import foofah.utils.PythonExecutor;
+import foofah.utils.FoofahExecutor;
 import foofah.utils.Tokenizer;
+import foofah.utils.TransformationsExtractor;
 import log.entity.Event;
 import org.apache.commons.lang3.tuple.Pair;
-import utils.PropertyValues;
+import pattern.entity.Pattern;
+import pattern.entity.PatternItem;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,6 +17,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FoofahService {
+    private static final FoofahService INSTANCE = new FoofahService();
+
+    private FoofahService() {
+
+    }
+
+    public static FoofahService getInstance() {
+        return INSTANCE;
+    }
 
     public Map<Pair<PatternItem, PatternItem>, String> findTransformations(Map<String, List<Event>> cases, Pattern pattern) {
         Map<Pair<PatternItem, PatternItem>, String> patternTransformations = new HashMap<>();
@@ -89,13 +97,21 @@ public class FoofahService {
 
     private String getFoofahTransformation(List<Transformation> transformations) {
         String output = null;
+        try {
+            File foofahFile = new File(FoofahExecutor.getFoofahPath() + "/foofah.temp");
+            foofahFile.deleteOnExit();
 
-        for (Transformation t : transformations) {
-            StringBuilder sb = valuesToFoofahJSON(t);
-            // Create temp file with data transformations
-            createFoofahFile(sb);
-            // Execute foofah script on temp file
-            output = PythonExecutor.execPython();
+            FileWriter fileWriter = new FileWriter(foofahFile);
+            for (Transformation t : transformations) {
+                StringBuilder sb = valuesToFoofahJSON(t);
+                fileWriter.write(sb.toString());
+                fileWriter.flush();
+                output = FoofahExecutor.execPython();
+            }
+
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return output;
@@ -117,18 +133,5 @@ public class FoofahService {
                 .collect(Collectors.joining(", ", "[", "]"));
 
         return sb.trim();
-    }
-
-    private void createFoofahFile(StringBuilder sb) {
-        File file = new File(PropertyValues.getProperty("tempFoofahFilePath"));
-        try {
-            FileWriter fw = new FileWriter(file);
-            fw.write(sb.toString());
-            fw.flush();
-            fw.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -1,1 +1,0 @@
-openFile goToUrl editField editField clickButton waitResponse clickButton clickButton editField copy paste editField copy paste editField clickButton

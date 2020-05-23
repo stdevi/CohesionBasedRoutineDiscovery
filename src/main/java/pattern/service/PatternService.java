@@ -6,8 +6,9 @@ import foofah.service.FoofahService;
 import lombok.Getter;
 import pattern.entity.Pattern;
 import pattern.entity.PatternItem;
+import sequence.Sequence;
 import sequence.service.SequenceService;
-import utils.PropertyValues;
+import spmf.service.SPMFService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,27 +19,23 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PatternService {
+    private static final PatternService INSTANCE = new PatternService();
 
     @Getter
     private List<Pattern> patterns;
 
-    private SequenceService sequenceService;
+    private PatternService() {
 
-    private CohesionService cohesionService;
-    private ItemsDependencyService dependencyService;
-    private FoofahService foofahService;
+    }
 
-    public PatternService(SequenceService sequenceService) {
-        this.sequenceService = sequenceService;
-
-        cohesionService = new CohesionService();
-        dependencyService = new ItemsDependencyService();
-        foofahService = new FoofahService();
+    public static PatternService getInstance() {
+        return INSTANCE;
     }
 
     public void parsePatterns() {
         List<String> stringPatterns = new ArrayList<>();
-        try (Stream<String> stream = Files.lines(Paths.get(PropertyValues.getProperty("spmfOutputFilePath")))) {
+        String path = SPMFService.getInstance().getOutputSPMFFile().getAbsolutePath();
+        try (Stream<String> stream = Files.lines(Paths.get(path))) {
             stream.forEach(stringPatterns::add);
         } catch (IOException e) {
             e.printStackTrace();
@@ -48,19 +45,20 @@ public class PatternService {
     }
 
     public void setCohesionScore(Pattern pattern) {
-        int cohesionScore = cohesionService.getCohesionScore(pattern, sequenceService.getSequences());
+        List<Sequence> sequences = SequenceService.getInstance().getSequences();
+        int cohesionScore = CohesionService.getInstance().getCohesionScore(pattern, sequences);
         pattern.setCohesionScore(cohesionScore);
     }
 
     public void setTransformations(Pattern pattern) {
-        var cases = sequenceService.getCases();
-        var transformations = foofahService.findTransformations(cases, pattern);
+        var cases = SequenceService.getInstance().getCases();
+        var transformations = FoofahService.getInstance().findTransformations(cases, pattern);
         pattern.setTransformations(transformations);
     }
 
     public void setDependencies(Pattern pattern) {
-        var cases = sequenceService.getCases();
-        var dependencies = dependencyService.findDependencies(cases, pattern);
+        var cases = SequenceService.getInstance().getCases();
+        var dependencies = ItemsDependencyService.getInstance().findDependencies(cases, pattern);
         pattern.setItemsDependencies(dependencies);
     }
 

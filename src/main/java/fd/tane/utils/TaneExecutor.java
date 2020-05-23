@@ -3,7 +3,6 @@ package fd.tane.utils;
 import fd.tane.entity.TaneDependency;
 import log.entity.Event;
 import pattern.entity.Pattern;
-import utils.PropertyValues;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TaneExecutor {
+    private static String tanePath;
     private List<List<String>> instances;
     private Map<String, List<Event>> cases;
     private Pattern pattern;
@@ -27,13 +27,17 @@ public class TaneExecutor {
         this.pattern = pattern;
     }
 
+    public static void setTanePath(String tanePath) {
+        TaneExecutor.tanePath = tanePath;
+    }
+
     public List<List<String>> getInstances() {
         return instances;
     }
 
     public void createInstancesFile() {
         this.instances = InstanceParser.getInstances(cases, pattern);
-        File file = new File(PropertyValues.getProperty("fdDataOriginFilePath"));
+        File file = new File(tanePath + "/original/data.orig");
 
         try {
             FileWriter writer = new FileWriter(file);
@@ -47,7 +51,7 @@ public class TaneExecutor {
     public void createTaneDataFiles() {
         try {
             ProcessBuilder pb = new ProcessBuilder()
-                    .directory(new File(PropertyValues.getProperty("taneOriginalDirPath")))
+                    .directory(new File(tanePath + "/original"))
                     .command("bash", "-c", "../bin/select.perl ../descriptions/data.dsc");
             Process p = pb.start();
             p.waitFor();
@@ -59,8 +63,7 @@ public class TaneExecutor {
     public List<TaneDependency> getFunctionalDependencies() {
         List<TaneDependency> functionalDependencies = new ArrayList<>();
         createFDFile();
-        try (Stream<String> stream = Files.lines(Paths.get(PropertyValues.getProperty("taneDirPath") +
-                "/functional_dependencies.txt"))) {
+        try (Stream<String> stream = Files.lines(Paths.get(tanePath + "/functional_dependencies.txt"))) {
             stream.filter(line -> line.contains("->") && !line.contains("key")).forEach(line -> {
                 String[] dependency = line.split("->");
                 if (dependency[0].split(" ").length > 1) {
@@ -85,7 +88,7 @@ public class TaneExecutor {
     private void createFDFile() {
         try {
             ProcessBuilder pb = new ProcessBuilder()
-                    .directory(new File(PropertyValues.getProperty("taneDirPath")))
+                    .directory(new File(tanePath))
                     .command(Arrays.asList("bash", "-c", String.format("bin/tane 20 %d %d data/data.dat > functional_dependencies.txt",
                             instances.size(), pattern.getItems().size())));
             Process p = pb.start();

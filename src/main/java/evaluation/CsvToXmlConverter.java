@@ -1,11 +1,9 @@
 package evaluation;
 
 import log.entity.Event;
-import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sequence.service.SequenceService;
-import utils.PropertyValues;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,28 +22,21 @@ public class CsvToXmlConverter {
     private Document doc;
     private Element process;
 
-    @Getter
-    private SequenceService sequenceService;
-
-    public CsvToXmlConverter() {
-        sequenceService = new SequenceService();
-    }
-
     public static void main(String[] args) {
         CsvToXmlConverter csvToXmlConverter = new CsvToXmlConverter();
-        csvToXmlConverter.getSequenceService().parseCases(args[0]);
-        csvToXmlConverter.parseCases(csvToXmlConverter.getSequenceService().getCases());
-        csvToXmlConverter.print();
+        SequenceService.getInstance().parseCases(args[0]);
+        csvToXmlConverter.parseCases(SequenceService.getInstance().getCases());
+        csvToXmlConverter.print(args[1]);
     }
 
-    public void print() {
+    public void print(String logPath) {
         try {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource source = new DOMSource(doc);
 
-            StreamResult result = new StreamResult(new File(PropertyValues.getProperty("automatableRoutinesDiscovererLogPath")));
+            StreamResult result = new StreamResult(new File(logPath));
             transformer.transform(source, result);
 
             System.out.println("Saved!");

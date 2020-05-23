@@ -5,7 +5,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,12 +20,13 @@ public class NoiseGenerator {
     }
 
     public static void main(String[] args) {
-        String logFile = args[0];
+        String inputLogFilePath = args[0];
+        String outputLogFilePath = args[1];
 
         NoiseGenerator noiseGenerator = new NoiseGenerator();
-        noiseGenerator.readLogFile(logFile);
+        noiseGenerator.readLogFile(inputLogFilePath);
         noiseGenerator.addNoise(1);
-        noiseGenerator.writeLogFileWithNoise();
+        noiseGenerator.writeLogFileWithNoise(outputLogFilePath);
     }
 
     public void readLogFile(String logFilePath) {
@@ -37,10 +37,8 @@ public class NoiseGenerator {
         }
     }
 
-    public void writeLogFileWithNoise() {
-        Path path = Paths.get("src/main/resources/csv_logs/noisy-log.csv");
-
-        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+    public void writeLogFileWithNoise(String path) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(path))) {
             writer.write(String.join("\n", events));
         } catch (IOException e) {
             e.printStackTrace();

@@ -7,6 +7,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CohesionService {
+    private static final CohesionService INSTANCE = new CohesionService();
+
+    private CohesionService() {
+
+    }
+
+    public static CohesionService getInstance() {
+        return INSTANCE;
+    }
 
     public int getCohesionScore(Pattern pattern, List<Sequence> sequences) {
         int medianOutlierCount = getMedianOutlierCount(pattern, sequences);

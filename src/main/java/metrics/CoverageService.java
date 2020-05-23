@@ -10,14 +10,18 @@ import java.util.List;
 import java.util.Map;
 
 public class CoverageService {
-    private SequenceService sequenceService;
+    private static final CoverageService INSTANCE = new CoverageService();
 
-    public CoverageService(SequenceService sequenceService) {
-        this.sequenceService = sequenceService;
+    private CoverageService() {
+
+    }
+
+    public static CoverageService getInstance() {
+        return INSTANCE;
     }
 
     public void setPatternsCumulativeCoverage(List<Pattern> patterns) {
-        List<Sequence> sequences = sequenceService.getSequences();
+        List<Sequence> sequences = SequenceService.getInstance().getSequences();
         Map<Pattern, Double> coveragePerPattern = new HashMap<>();
         List<Sequence> coverageSequences = new ArrayList<>();
         sequences.forEach(sequence -> coverageSequences.add(new Sequence(sequence)));

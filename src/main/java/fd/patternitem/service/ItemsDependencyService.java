@@ -11,14 +11,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ItemsDependencyService {
+    private static final ItemsDependencyService INSTANCE = new ItemsDependencyService();
 
-    private TaneService taneService;
+    private ItemsDependencyService() {
 
-    public ItemsDependencyService() {
-        taneService = new TaneService();
+    }
+
+    public static ItemsDependencyService getInstance() {
+        return INSTANCE;
     }
 
     public List<ItemsDependency> findDependencies(Map<String, List<Event>> cases, Pattern pattern) {
+        TaneService taneService = TaneService.getInstance();
         List<ItemsDependency> itemsDependencies = new ArrayList<>();
         List<TaneDependency> functionalDependencies = taneService.getFunctionalDependencies(cases, pattern);
         var emptyTransformationPairs = pattern.getEmptyTransformationPairs();

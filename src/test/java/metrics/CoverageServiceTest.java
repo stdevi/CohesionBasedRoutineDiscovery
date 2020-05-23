@@ -22,8 +22,8 @@ class CoverageServiceTest {
 
     @BeforeEach
     void setUp() {
-        sequenceService = new SequenceService();
-        coverageService = new CoverageService(sequenceService);
+        sequenceService = SequenceService.getInstance();
+        coverageService = CoverageService.getInstance();
         sequences = new ArrayList<>();
         patterns = new ArrayList<>();
     }

@@ -16,15 +16,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MetricService {
+    private static final MetricService INSTANCE = new MetricService();
 
-    private SequenceService sequenceService;
+    private MetricService() {
 
-    public MetricService(SequenceService sequenceService) {
-        this.sequenceService = sequenceService;
+    }
+
+    public static MetricService getInstance() {
+        return INSTANCE;
     }
 
     public void printPatternsMetrics(List<Pattern> patterns) {
-        List<List<String>> uniqueSequences = sequenceService.getSequences().stream()
+        List<List<String>> uniqueSequences = SequenceService.getInstance().getSequences().stream()
                 .map(Sequence::getItems).distinct().collect(Collectors.toList());
 
         List<Double> fscores = new ArrayList<>();
@@ -46,7 +49,7 @@ public class MetricService {
             System.out.println("| TP: " + TP);
             System.out.println("| FN: " + FN);
             System.out.println();
-            fscores.add(((double) (2 * TP) / (2*TP + FN)));
+            fscores.add(((double) (2 * TP) / (2 * TP + FN)));
             TP = 0;
             FN = 0;
         }
@@ -56,7 +59,7 @@ public class MetricService {
 
     public void printExternalPatternsMetrics(String path) {
         List<List<String>> patterns = readExternalPatterns(path);
-        List<List<String>> uniqueSequences = sequenceService.getSequences().stream()
+        List<List<String>> uniqueSequences = SequenceService.getInstance().getSequences().stream()
                 .map(Sequence::getItems).distinct().collect(Collectors.toList());
 
         int TP = 0;
@@ -85,7 +88,7 @@ public class MetricService {
     public double getExternalPatternsCoverage(String path) {
         List<List<String>> patterns = readExternalPatterns(path);
         List<Sequence> coverageSequences = new ArrayList<>();
-        sequenceService.getSequences().forEach(sequence -> coverageSequences.add(new Sequence(sequence)));
+        SequenceService.getInstance().getSequences().forEach(sequence -> coverageSequences.add(new Sequence(sequence)));
 
         int totalNumberOfEvents = coverageSequences.stream().mapToInt(sequence -> sequence.getItems().size()).sum();
 
