@@ -32,7 +32,7 @@ where `path-to-log` is the specified path to the dataset, `path-to-foofah` is th
 For example, if we place Foofah and Tane projects in the project folder:
 ```bash
 . 
-│── CohesionBasedRoutineDiscovery
+└── CohesionBasedRoutineDiscovery
     ├── foofah
     ├── tane-1.0
     ├── scr
